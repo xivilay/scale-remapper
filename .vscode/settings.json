@@ -1,0 +1,11 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.ctestArgs": ["--verbose"],
+    "cmake.configureArgs": [],
+    "cmake.preferredGenerators": ["Visual Studio 16 2019", "Ninja", "Unix Makefiles"],
+    "cmake.configureOnOpen": true,
+    "lldb.showDisassembly": "auto",
+    "lldb.dereferencePointers": true,
+    "C_Cpp.intelliSenseEngine": "Default",
+    "C_Cpp.default.cppStandard": "c++17"
+}
