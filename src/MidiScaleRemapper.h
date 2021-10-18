@@ -6,6 +6,7 @@ class MidiScaleRemapper : public AudioProcessor {
    public:
     MidiScaleRemapper() : AudioProcessor(BusesProperties()) {
         addParameter(noteOnVel = new AudioParameterFloat("volume", "Midi volume", 0.0, 1.0, 0.5));
+        addParameter(transformEnabled = new AudioParameterBool("transformEnabled", "Enable transform", false));
     }
 
     void prepareToPlay(double, int) override {}
@@ -13,8 +14,9 @@ class MidiScaleRemapper : public AudioProcessor {
 
     void processBlock(AudioBuffer<float> &buffer, MidiBuffer &midiMessages) override {
         buffer.clear();
-
-        midiMessages.swapWith(transformMidi(midiMessages));
+        if (*transformEnabled == true) {
+            midiMessages.swapWith(transformMidi(midiMessages));
+        }
     }
 
     AudioProcessorEditor *createEditor() override { return new GenericAudioProcessorEditor(*this); }
@@ -35,11 +37,13 @@ class MidiScaleRemapper : public AudioProcessor {
     double getTailLengthSeconds() const override { return 0; }
 
     void getStateInformation(MemoryBlock &destData) override {
-        MemoryOutputStream(destData, true).writeFloat(*noteOnVel);
+        MemoryOutputStream stream(destData, true);
+        stream.writeFloat(*noteOnVel);
     }
 
     void setStateInformation(const void *data, int sizeInBytes) override {
-        noteOnVel->setValueNotifyingHost(MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat());
+        MemoryInputStream stream(data, static_cast<size_t>(sizeInBytes), false);
+        noteOnVel->setValueNotifyingHost(stream.readFloat());
     }
 
    private:
@@ -94,6 +98,7 @@ class MidiScaleRemapper : public AudioProcessor {
     }
 
     AudioParameterFloat *noteOnVel;
+    AudioParameterBool *transformEnabled;
 
     std::array<int, 12> scaleTransformation{0, 12, -1, 12, 0, 1, 12, 0, 12, 0, 12, -1};
 
