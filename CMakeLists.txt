@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.1.5)
 set(BINARY_NAME "MidiScaleRemapper")
 set(VERSION "0.0.1")
 set(JUCE_DIR "../JUCE")
-set(JUCE_MODULES_DIR "${JUCE_DIR}/modules")
 set(SRC_DIR "./src")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -14,11 +13,12 @@ project(${BINARY_NAME} VERSION ${VERSION})
 add_subdirectory(${JUCE_DIR} "juce")
 
 juce_add_plugin(${BINARY_NAME}
-    COMPANY_NAME "JUCE"
+    COMPANY_NAME XivilaY
     PRODUCT_NAME "${BINARY_NAME}"
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
-    IS_MIDI_EFFECT TRUE
+    PLUGIN_MANUFACTURER_CODE XivY
+    PLUGIN_CODE Xiv8
     FORMATS VST3
 )
 
