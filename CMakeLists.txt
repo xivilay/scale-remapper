@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.1.5)
 
 set(BINARY_NAME "MidiScaleRemapper")
-set(VERSION "0.0.1")
-set(JUCE_DIR "../JUCE")
+set(VERSION "0.1.0")
+set(JUCE_DIR "../react-juce-chord-recognition/juce-react/ext/juce")
 set(SRC_DIR "./src")
+
+set(REACT_JUCE "REACT_JUCE")
+# see https://github.com/nick-thompson/react-juce/tree/master/react_juce
+set(REACT_JUCE_DIR "../${REACT_JUCE}")  # path to REACT JUCE
+set(JS_BUNDLE_PATH "./ui/build/js/bundle.js")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,6 +16,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(${BINARY_NAME} VERSION ${VERSION})
 
 add_subdirectory(${JUCE_DIR} "juce")
+
+juce_add_module(${REACT_JUCE_DIR})
+
+target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_DUKTAPE=1)
 
 juce_add_plugin(${BINARY_NAME}
     COMPANY_NAME XivilaY
@@ -22,6 +31,10 @@ juce_add_plugin(${BINARY_NAME}
     FORMATS VST3
 )
 
+juce_add_binary_data(BinaryData SOURCES
+    ${JS_BUNDLE_PATH}
+)
+
 juce_generate_juce_header(${BINARY_NAME})
 
 target_sources(${BINARY_NAME} PRIVATE
@@ -30,6 +43,8 @@ target_sources(${BINARY_NAME} PRIVATE
 
 target_compile_definitions(${BINARY_NAME} PRIVATE
     JUCE_VST3_CAN_REPLACE_VST2=0
+    P_WIDTH=640
+    P_HEIGHT=480
 )
 
 target_link_libraries(${BINARY_NAME} PRIVATE
@@ -49,4 +64,7 @@ target_link_libraries(${BINARY_NAME} PRIVATE
     juce::juce_graphics
     juce::juce_gui_basics
     juce::juce_gui_extra
+
+    ${REACT_JUCE}
+    BinaryData
 )

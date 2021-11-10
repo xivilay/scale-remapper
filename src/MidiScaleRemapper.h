@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CustomEditor.h"
+
 class MidiScaleRemapper : public AudioProcessor {
    public:
     MidiScaleRemapper() : AudioProcessor(BusesProperties()) {
@@ -30,9 +32,18 @@ class MidiScaleRemapper : public AudioProcessor {
         }
     }
 
-    AudioProcessorEditor *createEditor() override { return new GenericAudioProcessorEditor(*this); }
+    AudioProcessorEditor* createEditor() {
+        auto* editor = new CustomEditor(*this);
 
-    const String getName() const override { return "MidiScaleRemapper"; }
+        editor->setResizable(true, true);
+        editor->setResizeLimits(P_WIDTH, P_HEIGHT, P_WIDTH * 2, P_HEIGHT * 2);
+        editor->getConstrainer()->setFixedAspectRatio(P_WIDTH / P_HEIGHT);
+        editor->setSize(P_WIDTH, P_HEIGHT);
+
+        return editor;
+    }
+
+    const String getName() const override { return JucePlugin_Name; }
 
     bool hasEditor() const override { return true; }
     bool acceptsMidi() const override { return true; }
