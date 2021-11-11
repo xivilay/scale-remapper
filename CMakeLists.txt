@@ -19,6 +19,14 @@ add_subdirectory(${JUCE_DIR} "juce")
 
 juce_add_module(${REACT_JUCE_DIR})
 
+# add_subdirectory(${REACT_JUCE_DIR}/hermes "hermes")
+# target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_HERMES=1)
+# target_include_directories(${REACT_JUCE} INTERFACE
+#     ${REACT_JUCE_DIR}/hermes/API/
+#     ${REACT_JUCE_DIR}/hermes/public/
+# )
+# target_link_libraries(${REACT_JUCE} INTERFACE hermesapi)
+
 target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_DUKTAPE=1)
 
 juce_add_plugin(${BINARY_NAME}

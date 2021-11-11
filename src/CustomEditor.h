@@ -38,7 +38,9 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         harness.watch(bundleFile);
         harness.start();
 #else
+        beforeBundleEvaluated();
         engine->evaluateInline(String::fromUTF8(BinaryData::bundle_js));
+        afterBundleEvaluated();
 #endif
 
         addAndMakeVisible(appRoot);
