@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.5)
 
-set(BINARY_NAME "MidiScaleRemapper")
+set(BINARY_NAME "ScaleRemapper")
 set(VERSION "0.1.0")
 set(JUCE_DIR "../react-juce-chord-recognition/juce-react/ext/juce")
 set(SRC_DIR "./src")
@@ -43,8 +43,8 @@ target_sources(${BINARY_NAME} PRIVATE
 
 target_compile_definitions(${BINARY_NAME} PRIVATE
     JUCE_VST3_CAN_REPLACE_VST2=0
-    P_WIDTH=640
-    P_HEIGHT=480
+    P_WIDTH=550
+    P_HEIGHT=450
 )
 
 target_link_libraries(${BINARY_NAME} PRIVATE
