@@ -18,6 +18,9 @@ class MidiScaleRemapper : public AudioProcessor {
         addParameter(new AudioParameterBool("transformEnabled", "Enable transform", true));
 
         setTransformation();
+
+        addParameter(new AudioParameterFloat("index", "Scale Index", 0.0f, 1.0f, 0.0f));
+        addParameter(new AudioParameterFloat("mode", "Mode Index", 0.0f, 1.0f, 0.0f));
     }
 
     void prepareToPlay(double, int) override {}
