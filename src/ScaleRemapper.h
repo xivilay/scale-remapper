@@ -17,8 +17,6 @@ class MidiScaleRemapper : public AudioProcessor {
 
         addParameter(new AudioParameterBool("transformEnabled", "Enable transform", true));
 
-        setTransformation();
-
         addParameter(new AudioParameterFloat("index", "Scale Index", 0.0f, 1.0f, 0.0f));
         addParameter(new AudioParameterFloat("mode", "Mode Index", 0.0f, 1.0f, 0.0f));
     }
@@ -35,8 +33,8 @@ class MidiScaleRemapper : public AudioProcessor {
         }
     }
 
-    AudioProcessorEditor* createEditor() {
-        auto* editor = new CustomEditor(*this);
+    AudioProcessorEditor *createEditor() {
+        auto *editor = new CustomEditor(*this);
 
         editor->setResizable(true, true);
         editor->setResizeLimits(P_WIDTH, P_HEIGHT, P_WIDTH * 2, P_HEIGHT * 2);
@@ -70,7 +68,6 @@ class MidiScaleRemapper : public AudioProcessor {
         // MemoryInputStream stream(data, static_cast<size_t>(sizeInBytes), false);
         // transformEnabled->setValueNotifyingHost(stream.readFloat());
     }
-
    private:
     int getTransformedNote(int noteIndex) {
         auto noteTransformation = getNoteTransformation(noteIndex);
@@ -90,27 +87,6 @@ class MidiScaleRemapper : public AudioProcessor {
         Array params = getParameters();
         auto param = dynamic_cast<AudioParameterInt *>(params[noteInOctaveIndex]);
         return param->get();
-    }
-
-    void setTransformation() {
-        Array params = getParameters();
-        int scaleTransformation[12] = {0, 12, -1, 12, 0, 1, 12, 0, 12, 0, 12, -1};
-        for (size_t i = 0; i < 12; i++) {
-            int n = scaleTransformation[i];
-            bool shouldMute;
-            int transform;
-            if (n == 12) {
-                shouldMute = true;
-                transform = 0;
-            } else {
-                shouldMute = false;
-                transform = n;
-            }
-            auto muteParam = dynamic_cast<AudioParameterBool *>(params[scaleLength + i]);
-            *muteParam = shouldMute;
-            auto transformParam = dynamic_cast<AudioParameterInt *>(params[i]);
-            *transformParam = transform;
-        }
     }
 
     MidiBuffer transformMidi(MidiBuffer midiMessages) {

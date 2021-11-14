@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.1.5)
 
 set(BINARY_NAME "ScaleRemapper")
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    set(BINARY_NAME "${BINARY_NAME}Dev")
+endif()
+
 set(VERSION "0.1.0")
 set(JUCE_DIR "../react-juce-chord-recognition/juce-react/ext/juce")
 set(SRC_DIR "./src")
