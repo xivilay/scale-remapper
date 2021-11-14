@@ -2,24 +2,33 @@
 
 #include "CustomEditor.h"
 
+AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
+    AudioProcessorValueTreeState::ParameterLayout p;
+
+    const int scaleLength = 12;
+
+    for (size_t i = 0; i < scaleLength; i++) {
+        auto istr = std::to_string(i);
+        p.add(std::make_unique<AudioParameterInt>("transformKey" + istr, "Transform Key " + istr, -scaleLength,
+                                                  scaleLength, 0));
+    }
+    for (size_t i = 0; i < scaleLength; i++) {
+        auto istr = std::to_string(i);
+        p.add(std::make_unique<AudioParameterBool>("muteKey" + istr, "Mute Key " + istr, false));
+    }
+
+    p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
+
+    p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
+    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.0f));
+
+    return p;
+}
+
 class MidiScaleRemapper : public AudioProcessor {
    public:
-    MidiScaleRemapper() : AudioProcessor(BusesProperties()) {
-        for (size_t i = 0; i < scaleLength; i++) {
-            auto istr = std::to_string(i);
-            addParameter(
-                new AudioParameterInt("transformKey" + istr, "Transform Key " + istr, -scaleLength, scaleLength, 0));
-        }
-        for (size_t i = 0; i < scaleLength; i++) {
-            auto istr = std::to_string(i);
-            addParameter(new AudioParameterBool("muteKey" + istr, "Mute Key " + istr, false));
-        }
-
-        addParameter(new AudioParameterBool("transformEnabled", "Enable transform", true));
-
-        addParameter(new AudioParameterFloat("index", "Scale Index", 0.0f, 1.0f, 0.0f));
-        addParameter(new AudioParameterFloat("mode", "Mode Index", 0.0f, 1.0f, 0.0f));
-    }
+    MidiScaleRemapper()
+        : AudioProcessor(BusesProperties()), parameters(*this, nullptr, "PARAMETERS", createParameterLayout()) {}
 
     void prepareToPlay(double, int) override {}
     void releaseResources() override {}
@@ -60,14 +69,19 @@ class MidiScaleRemapper : public AudioProcessor {
     double getTailLengthSeconds() const override { return 0; }
 
     void getStateInformation(MemoryBlock &destData) override {
-        // MemoryOutputStream stream(destData, true);
-        // stream.writeFloat(*transformEnabled);
+        auto state = parameters.copyState();
+        std::unique_ptr<XmlElement> xml(state.createXml());
+        copyXmlToBinary(*xml, destData);
     }
 
     void setStateInformation(const void *data, int sizeInBytes) override {
-        // MemoryInputStream stream(data, static_cast<size_t>(sizeInBytes), false);
-        // transformEnabled->setValueNotifyingHost(stream.readFloat());
+        std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+        if (xmlState.get() != nullptr)
+            if (xmlState->hasTagName(parameters.state.getType()))
+                parameters.replaceState(ValueTree::fromXml(*xmlState));
     }
+
    private:
     int getTransformedNote(int noteIndex) {
         auto noteTransformation = getNoteTransformation(noteIndex);
@@ -122,6 +136,8 @@ class MidiScaleRemapper : public AudioProcessor {
     }
 
     const int scaleLength = 12;
+
+    AudioProcessorValueTreeState parameters;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiScaleRemapper)
 };
