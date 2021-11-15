@@ -6,13 +6,13 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(BINARY_NAME "${BINARY_NAME}Dev")
 endif()
 
-set(VERSION "0.1.0")
-set(JUCE_DIR "../react-juce-chord-recognition/juce-react/ext/juce")
+set(VERSION "0.2.0")
+set(JUCE_DIR "external/juce")
 set(SRC_DIR "./src")
 
-set(REACT_JUCE "REACT_JUCE")
+set(REACT_JUCE "react_juce")
 # see https://github.com/nick-thompson/react-juce/tree/master/react_juce
-set(REACT_JUCE_DIR "../${REACT_JUCE}")  # path to REACT JUCE
+set(REACT_JUCE_DIR "external/react-juce/${REACT_JUCE}")  # path to REACT JUCE
 set(JS_BUNDLE_PATH "./ui/build/js/bundle.js")
 
 set(CMAKE_CXX_STANDARD 17)

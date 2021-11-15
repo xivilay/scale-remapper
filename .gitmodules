@@ -1,0 +1,9 @@
+[submodule "ui"]
+	path = ui
+	url = https://github.com/xivilay/scale-remapper-ui
+[submodule "external/react-juce"]
+	path = external/react-juce
+	url = https://github.com/nick-thompson/react-juce
+[submodule "external/juce"]
+	path = external/juce
+	url = https://github.com/juce-framework/JUCE
