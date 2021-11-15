@@ -20,7 +20,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
 
     p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
-    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.0f));
+    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
 
     return p;
 }
