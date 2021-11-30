@@ -92,8 +92,15 @@ class MidiScaleRemapper : public AudioProcessor {
     }
 
     int getNoteTransformation(int noteIndex) {
-        auto noteInOctaveIndex = noteIndex % scaleLength;
-        auto istr = std::to_string(noteInOctaveIndex);
+        int noteInOctaveIndex = noteIndex % scaleLength;
+        int i = 0; // honestly I don't like what I am doing here
+        if (noteInOctaveIndex == 2) i = 1;
+        if (noteInOctaveIndex == 4) i = 2;
+        if (noteInOctaveIndex == 5) i = 3;
+        if (noteInOctaveIndex == 7) i = 4;
+        if (noteInOctaveIndex == 9) i = 5;
+        if (noteInOctaveIndex == 11) i = 6;
+        auto istr = std::to_string(i);
         return dynamic_cast<AudioParameterInt *>(parameters.getParameter("transformKey" + istr))->get();
     }
 
