@@ -5,6 +5,11 @@
 AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     AudioProcessorValueTreeState::ParameterLayout p;
 
+    p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
+
+    p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
+    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
+
     const int scaleLength = 12;
 
     for (size_t i = 0; i < scaleLength; i++) {
@@ -16,11 +21,6 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         auto istr = std::to_string(i);
         p.add(std::make_unique<AudioParameterBool>("muteKey" + istr, "Mute Key " + istr, false));
     }
-
-    p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
-
-    p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
-    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
 
     return p;
 }
@@ -35,9 +35,9 @@ class MidiScaleRemapper : public AudioProcessor {
 
     void processBlock(AudioBuffer<float> &buffer, MidiBuffer &midiMessages) override {
         buffer.clear();
-        Array params = getParameters();
-        auto transformEnabled = dynamic_cast<AudioParameterBool *>(params[scaleLength * 2]);
-        if (*transformEnabled) {
+        
+        auto transformEnabled = dynamic_cast<AudioParameterBool *>(parameters.getParameter("transformEnabled"))->get();
+        if (transformEnabled) {
             midiMessages.swapWith(transformMidi(midiMessages));
         }
     }
@@ -90,17 +90,14 @@ class MidiScaleRemapper : public AudioProcessor {
 
     bool shouldMute(int noteIndex) {
         auto noteInOctaveIndex = noteIndex % scaleLength;
-        auto muteParamIndex = scaleLength + noteInOctaveIndex;
-        Array params = getParameters();
-        auto param = dynamic_cast<AudioParameterBool *>(params[muteParamIndex]);
-        return param->get();
+        auto istr = std::to_string(noteInOctaveIndex);
+        return dynamic_cast<AudioParameterBool *>(parameters.getParameter("muteKey" + istr))->get();
     }
 
     int getNoteTransformation(int noteIndex) {
         auto noteInOctaveIndex = noteIndex % scaleLength;
-        Array params = getParameters();
-        auto param = dynamic_cast<AudioParameterInt *>(params[noteInOctaveIndex]);
-        return param->get();
+        auto istr = std::to_string(noteInOctaveIndex);
+        return dynamic_cast<AudioParameterInt *>(parameters.getParameter("transformKey" + istr))->get();
     }
 
     MidiBuffer transformMidi(MidiBuffer midiMessages) {
