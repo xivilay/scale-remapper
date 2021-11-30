@@ -17,10 +17,6 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         p.add(std::make_unique<AudioParameterInt>("transformKey" + istr, "Transform Key " + istr, -scaleLength,
                                                   scaleLength, 0));
     }
-    for (size_t i = 0; i < scaleLength; i++) {
-        auto istr = std::to_string(i);
-        p.add(std::make_unique<AudioParameterBool>("muteKey" + istr, "Mute Key " + istr, false));
-    }
 
     return p;
 }
@@ -35,7 +31,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
     void processBlock(AudioBuffer<float> &buffer, MidiBuffer &midiMessages) override {
         buffer.clear();
-        
+
         auto transformEnabled = dynamic_cast<AudioParameterBool *>(parameters.getParameter("transformEnabled"))->get();
         if (transformEnabled) {
             midiMessages.swapWith(transformMidi(midiMessages));
@@ -89,9 +85,10 @@ class MidiScaleRemapper : public AudioProcessor {
     }
 
     bool shouldMute(int noteIndex) {
-        auto noteInOctaveIndex = noteIndex % scaleLength;
-        auto istr = std::to_string(noteInOctaveIndex);
-        return dynamic_cast<AudioParameterBool *>(parameters.getParameter("muteKey" + istr))->get();
+        int i = noteIndex % scaleLength;
+        // black notes indexes
+        if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10) return true;
+        return false;
     }
 
     int getNoteTransformation(int noteIndex) {
