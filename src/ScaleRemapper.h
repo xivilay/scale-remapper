@@ -53,7 +53,7 @@ class MidiScaleRemapper : public AudioProcessor {
         return editor;
     }
 
-    const String getName() const override { return JucePlugin_Name; }
+    const String getName() const override { return ProjectInfo::projectName; }
 
     bool hasEditor() const override { return true; }
     bool acceptsMidi() const override { return true; }
