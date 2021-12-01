@@ -6,16 +6,17 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     AudioProcessorValueTreeState::ParameterLayout p;
 
     p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
-
+    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 9, 7));
     p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
     p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
+    p.add(std::make_unique<AudioParameterInt>("baseOctave", "Base Octave", 0, 10, 4));
+    p.add(std::make_unique<AudioParameterInt>("root", "Root Note", 0, 11, 0));
 
     const int scaleLength = 12;
 
     for (size_t i = 0; i < scaleLength; i++) {
         auto istr = std::to_string(i);
-        p.add(std::make_unique<AudioParameterInt>("transformKey" + istr, "Transform Key " + istr, -scaleLength,
-                                                  scaleLength, 0));
+        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, 1));
     }
 
     return p;
@@ -80,28 +81,89 @@ class MidiScaleRemapper : public AudioProcessor {
 
    private:
     int getTransformedNote(int noteIndex) {
-        auto noteTransformation = getNoteTransformation(noteIndex);
-        return noteIndex + noteTransformation;
+        if (isScaleChanged()) {
+            createNotesMap();
+        }
+
+        return notesMap[noteIndex];
     }
 
-    bool shouldMute(int noteIndex) {
+    bool shouldMute(int noteIndex) { return !isWhiteNote(noteIndex); }
+
+    bool isWhiteNote(int noteIndex) {
         int i = noteIndex % scaleLength;
-        // black notes indexes
-        if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10) return true;
-        return false;
+        if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10) return false;
+        return true;
     }
 
-    int getNoteTransformation(int noteIndex) {
-        int noteInOctaveIndex = noteIndex % scaleLength;
-        int i = 0; // honestly I don't like what I am doing here
-        if (noteInOctaveIndex == 2) i = 1;
-        if (noteInOctaveIndex == 4) i = 2;
-        if (noteInOctaveIndex == 5) i = 3;
-        if (noteInOctaveIndex == 7) i = 4;
-        if (noteInOctaveIndex == 9) i = 5;
-        if (noteInOctaveIndex == 11) i = 6;
-        auto istr = std::to_string(i);
-        return dynamic_cast<AudioParameterInt *>(parameters.getParameter("transformKey" + istr))->get();
+    bool isScaleChanged() {
+        // TODO do not call remap if no audio param was changed
+        return true;
+    }
+
+    void createNotesMap() {
+        notesMap.clear();
+
+        int tonics = dynamic_cast<AudioParameterInt *>(parameters.getParameter("tonics"))->get();
+        int octave = dynamic_cast<AudioParameterInt *>(parameters.getParameter("baseOctave"))->get();
+
+        const int notesInOctave = 12;
+        const int minNote = 0;
+        const int maxNote = 127;
+        const int baseNote = octave * notesInOctave;
+
+        int intervalsSum = 0;
+        Array<int> intervals = {};
+        for (int i = 0; i < tonics - 1; i++) {
+            auto istr = std::to_string(i);
+            int val = dynamic_cast<AudioParameterInt *>(parameters.getParameter("interval" + istr))->get();
+            intervalsSum += val;
+            if (intervalsSum > notesInOctave) {
+                intervalsSum -= val;
+                break;
+            }
+            intervals.insert(i, val);
+        }
+
+        if (intervalsSum < notesInOctave) {
+            intervals.insert(intervals.size(), notesInOctave - intervalsSum);
+        }
+
+        const int tones = intervals.size();
+
+        int intervalIndex;
+
+        notesMap.set(baseNote, baseNote);
+
+        intervalIndex = tones - 1;
+        int prevNote = baseNote;
+        for (int i = baseNote - 1; i >= minNote; i--) {
+            if (isWhiteNote(i)) {
+                int shift = intervals[intervalIndex];
+                int mappedValue = prevNote - shift;
+                if (mappedValue < minNote) {
+                    break;
+                }
+                notesMap.set(i, mappedValue);
+                prevNote = mappedValue;
+                intervalIndex = intervalIndex - 1 < 0 ? tones - 1 : intervalIndex - 1;
+            }
+        }
+
+        intervalIndex = 0;
+        int nextNote = baseNote;
+        for (int i = baseNote + 1; i <= maxNote; i++) {
+            if (isWhiteNote(i)) {
+                int shift = intervals[intervalIndex];
+                int mappedValue = nextNote + shift;
+                if (mappedValue > maxNote) {
+                    break;
+                }
+                notesMap.set(i, mappedValue);
+                nextNote = mappedValue;
+                intervalIndex = intervalIndex + 1 > tones - 1 ? 0 : intervalIndex + 1;
+            }
+        }
     }
 
     MidiBuffer transformMidi(MidiBuffer midiMessages) {
@@ -137,6 +199,7 @@ class MidiScaleRemapper : public AudioProcessor {
     }
 
     const int scaleLength = 12;
+    HashMap<int, int> notesMap;
 
     AudioProcessorValueTreeState parameters;
 
