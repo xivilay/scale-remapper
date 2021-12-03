@@ -19,6 +19,20 @@ jobs:
       with:
         token: ${{secrets.GH_PAT}}
         submodules: 'true'
+        
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+
+    - name: Set Up Yarn
+      run: npm install -g yarn
+    
+    - name: Install UI Dependencies
+      working-directory: ./ui
+      run: yarn install
+      
+    - name: Build UI Bundle
+      working-directory: ./ui
+      run: yarn build
 
     - name: Configure CMake
       run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
