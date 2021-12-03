@@ -42,6 +42,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
             sudo apt-get update && sudo apt install g++ gcc libx11-dev libxinerama-dev libxext-dev
+            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
+            sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
