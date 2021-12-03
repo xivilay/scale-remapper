@@ -41,7 +41,7 @@ jobs:
       - name: Install Linux Deps
         if: runner.os == 'Linux'
         run: |
-            sudo apt-get update && sudo apt install g++ gcc libx11-dev libxinerama-dev libxext-dev
+            sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev
             sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
             sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
 
