@@ -48,6 +48,8 @@ target_sources(${BINARY_NAME} PRIVATE
 
 target_compile_definitions(${BINARY_NAME} PRIVATE
     JUCE_VST3_CAN_REPLACE_VST2=0
+    JUCE_USE_CURL=0
+    JUCE_WEB_BROWSER=0
     P_WIDTH=550
     P_HEIGHT=450
 )
