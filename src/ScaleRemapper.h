@@ -35,7 +35,8 @@ class MidiScaleRemapper : public AudioProcessor {
 
         auto transformEnabled = dynamic_cast<AudioParameterBool *>(parameters.getParameter("transformEnabled"))->get();
         if (transformEnabled) {
-            midiMessages.swapWith(transformMidi(midiMessages));
+            MidiBuffer nextMessages = transformMidi(midiMessages);
+            midiMessages.swapWith(nextMessages);
         }
     }
 
