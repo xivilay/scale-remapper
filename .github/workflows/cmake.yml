@@ -14,7 +14,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Source Code
+      uses: actions/checkout@v2
+      with:
+        token: ${{secrets.GH_PAT}}
+        submodules: 'true'
 
     - name: Configure CMake
       run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
