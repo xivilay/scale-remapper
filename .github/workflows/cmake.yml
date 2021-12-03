@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ['macos', 'windows', 'ubuntu']
+        runner: ['ubuntu']
     runs-on: ${{ matrix.runner }}-latest
     name: ${{ matrix.runner }}
     steps:
@@ -37,6 +37,11 @@ jobs:
       - name: Build UI Bundle
         working-directory: ./ui
         run: yarn build
+        
+      - name: Install Linux Deps
+        if: runner.os == 'Linux'
+        run: |
+            sudo apt-get update && sudo apt install libx11-dev
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
