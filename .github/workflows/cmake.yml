@@ -11,39 +11,43 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ['macos', 'windows', 'ubuntu']
+    runs-on: ${{ matrix.runner }}-latest
+    name: ${{ matrix.runner }}
     steps:
-    - name: Checkout Source Code
-      uses: actions/checkout@v2
-      with:
-        token: ${{secrets.GH_PAT}}
-        submodules: 'recursive'
-        
-    - name: Set Up Node.js
-      uses: actions/setup-node@v2
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+        with:
+          token: ${{secrets.GH_PAT}}
+          submodules: 'recursive'
 
-    - name: Set Up Yarn
-      run: npm install -g yarn
-    
-    - name: Install UI Dependencies
-      working-directory: ./ui
-      run: yarn install
-      
-    - name: Build UI Bundle
-      working-directory: ./ui
-      run: yarn build
+      - name: Set Up Node.js
+        uses: actions/setup-node@v2
 
-    - name: Configure CMake
-      run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Set Up Yarn
+        run: npm install -g yarn
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-      
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows_x64
-        path: ${{github.workspace}}/build/**/*.vst3
-        if-no-files-found: error
-        retention-days: 1
+      - name: Install UI Dependencies
+        working-directory: ./ui
+        run: yarn install
+
+      - name: Build UI Bundle
+        working-directory: ./ui
+        run: yarn build
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.runner }}
+          path: ${{github.workspace}}/build/**/*.vst3
+          if-no-files-found: error
+          retention-days: 1
