@@ -6,7 +6,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     AudioProcessorValueTreeState::ParameterLayout p;
 
     p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
-    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 9, 7));
+    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 12, 7));
     p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
     p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
     p.add(std::make_unique<AudioParameterInt>("baseOctave", "Base Octave", 0, 10, 4));
