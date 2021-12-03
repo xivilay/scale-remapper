@@ -40,6 +40,8 @@ juce_add_binary_data(BinaryData SOURCES
     ${JS_BUNDLE_PATH}
 )
 
+set_target_properties(BinaryData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 juce_generate_juce_header(${BINARY_NAME})
 
 target_sources(${BINARY_NAME} PRIVATE
