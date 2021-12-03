@@ -53,6 +53,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.runner }}
-          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
+          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}/**/*.vst3
           if-no-files-found: error
           retention-days: 1
