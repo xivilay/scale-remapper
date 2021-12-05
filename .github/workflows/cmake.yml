@@ -20,18 +20,6 @@ jobs:
     runs-on: ${{ matrix.runner }}-latest
     name: ${{ matrix.runner }}
     steps:
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-        with:
-          strip_v: true
-
-      - name: Use tag
-        run: echo ${{steps.tag.outputs.tag}}
-
-      - name: Echo ref
-        run: echo ${{github.ref}}
-
       - name: Checkout Source Code
         uses: actions/checkout@v2
         with:
@@ -78,25 +66,31 @@ jobs:
     outputs: 
         upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+    - name: Get tag
+      id: tag
+      uses: dawidd6/action-get-tag@v1
+      with:
+        strip_v: true
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{steps.tag.outputs.tag}}
+        release_name: ${{steps.tag.outputs.tag}}
         draft: false
         prerelease: true
 
     - name: Download All Artifacts
       uses: actions/download-artifact@v2
   
-    # - name: Upload Windows Asset
-    #   uses: actions/upload-release-asset@v1
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./${{env.PROJECT_NAME}}_windows.zip
-    #     asset_name: ${{env.PROJECT_NAME}}_windows.zip
-    #     asset_content_type: application/zip
+    - name: Upload Windows Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{env.PROJECT_NAME}}_windows.zip
+        asset_name: ${{env.PROJECT_NAME}}_windows.zip
+        asset_content_type: application/zip
 
     - name: Upload Linux Asset
       uses: actions/upload-release-asset@v1
@@ -106,10 +100,10 @@ jobs:
         asset_name: ${{env.PROJECT_NAME}}_ubuntu.zip
         asset_content_type: application/zip
 
-    # - name: Upload MacOS Asset
-    #   uses: actions/upload-release-asset@v1
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./${{env.PROJECT_NAME}}_macos.zip
-    #     asset_name: ${{env.PROJECT_NAME}}_macos.zip
-    #     asset_content_type: application/zip
+    - name: Upload MacOS Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{env.PROJECT_NAME}}_macos.zip
+        asset_name: ${{env.PROJECT_NAME}}_macos.zip
+        asset_content_type: application/zip
