@@ -81,7 +81,7 @@ jobs:
 
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "${{env.PROJECT_NAME}}*.7z"
+        artifacts: "${{env.PROJECT_NAME}}*/*.7z"
         artifactContentType: application/zip
         token: ${{ secrets.GH_RELEASE }}
         name: ${{steps.tag.outputs.tag}}
