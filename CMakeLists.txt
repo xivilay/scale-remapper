@@ -24,6 +24,14 @@ add_subdirectory(${JUCE_DIR} "juce")
 
 juce_add_module(${REACT_JUCE_DIR})
 
+if(WIN32)
+    message(STATUS "Building for Windows...")
+    set(ASIO_DIR "sdk/asio")
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ASIO_DIR})
+        set(BUILD_ASIO 1)
+    endif()
+endif(WIN32)
+
 target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_DUKTAPE=1)
 
 juce_add_plugin(${BINARY_NAME}
@@ -55,6 +63,12 @@ target_compile_definitions(${BINARY_NAME} PRIVATE
     P_WIDTH=550
     P_HEIGHT=500
 )
+
+if(BUILD_ASIO)
+    message(STATUS "Adding ASIO...")
+    target_compile_definitions(${BINARY_NAME} PRIVATE JUCE_ASIO=1)
+    target_include_directories(${BINARY_NAME} PRIVATE ${ASIO_DIR})
+endif(BUILD_ASIO)
 
 target_link_libraries(${BINARY_NAME} PRIVATE
     juce::juce_recommended_config_flags
