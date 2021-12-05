@@ -51,11 +51,15 @@ jobs:
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+      - name: Zip
+        working-directory: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
+        run: cmake -E tar cv ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z --format=7zip VST3/${{env.PROJECT_NAME}}.vst3
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
-          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}/**/*.vst3
+          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z
           if-no-files-found: error
           retention-days: 1
 
@@ -72,10 +76,12 @@ jobs:
       with:
         strip_v: true
 
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v2
 
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "${{env.PROJECT_NAME}}*.zip"
+        artifacts: "${{env.PROJECT_NAME}}*.7z"
         artifactContentType: application/zip
         token: ${{ secrets.GH_RELEASE }}
         name: ${{steps.tag.outputs.tag}}
