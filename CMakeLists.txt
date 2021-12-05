@@ -6,7 +6,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(BINARY_NAME "${BINARY_NAME}Dev")
 endif()
 
-set(VERSION "0.3.3")
+set(VERSION "0.3.8")
 set(JUCE_DIR "external/juce")
 set(SRC_DIR "./src")
 
