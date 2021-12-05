@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.1.5)
 
-set(BINARY_NAME "ScaleRemapper")
+set(PROJECT_NAME "ScaleRemapper")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(BINARY_NAME "${BINARY_NAME}Dev")
+    set(PROJECT_NAME "${PROJECT_NAME}Dev")
 endif()
 
 set(VERSION "0.3.8")
@@ -18,7 +18,7 @@ set(JS_BUNDLE_PATH "./ui/build/js/bundle.js")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(${BINARY_NAME} VERSION ${VERSION})
+project(${PROJECT_NAME} VERSION ${VERSION})
 
 add_subdirectory(${JUCE_DIR} "juce")
 
@@ -34,9 +34,9 @@ endif(WIN32)
 
 target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_DUKTAPE=1)
 
-juce_add_plugin(${BINARY_NAME}
+juce_add_plugin(${PROJECT_NAME}
     COMPANY_NAME XivilaY
-    PRODUCT_NAME "${BINARY_NAME}"
+    PRODUCT_NAME "${PROJECT_NAME}"
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
@@ -50,13 +50,13 @@ juce_add_binary_data(BinaryData SOURCES
 
 set_target_properties(BinaryData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-juce_generate_juce_header(${BINARY_NAME})
+juce_generate_juce_header(${PROJECT_NAME})
 
-target_sources(${BINARY_NAME} PRIVATE
+target_sources(${PROJECT_NAME} PRIVATE
     "${SRC_DIR}/Main.cpp"
 )
 
-target_compile_definitions(${BINARY_NAME} PRIVATE
+target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
@@ -66,11 +66,11 @@ target_compile_definitions(${BINARY_NAME} PRIVATE
 
 if(BUILD_ASIO)
     message(STATUS "Adding ASIO...")
-    target_compile_definitions(${BINARY_NAME} PRIVATE JUCE_ASIO=1)
-    target_include_directories(${BINARY_NAME} PRIVATE ${ASIO_DIR})
+    target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_ASIO=1)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ASIO_DIR})
 endif(BUILD_ASIO)
 
-target_link_libraries(${BINARY_NAME} PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
