@@ -45,7 +45,6 @@ class MidiScaleRemapper : public AudioProcessor {
 
         editor->setResizable(true, true);
         editor->setResizeLimits(P_WIDTH, P_HEIGHT, P_WIDTH * 2, P_HEIGHT * 2);
-        editor->getConstrainer()->setFixedAspectRatio(P_WIDTH / P_HEIGHT);
         editor->setSize(P_WIDTH, P_HEIGHT);
 
         return editor;
@@ -107,6 +106,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
         int tonics = dynamic_cast<AudioParameterInt *>(parameters.getParameter("tonics"))->get();
         int octave = dynamic_cast<AudioParameterInt *>(parameters.getParameter("baseOctave"))->get();
+        int root = dynamic_cast<AudioParameterInt *>(parameters.getParameter("root"))->get();
 
         const int notesInOctave = 12;
         const int minNote = 0;
@@ -134,7 +134,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
         int intervalIndex;
 
-        notesMap.set(baseNote, baseNote);
+        notesMap.set(baseNote, baseNote + root);
 
         intervalIndex = tones - 1;
         int prevNote = baseNote;
@@ -145,7 +145,7 @@ class MidiScaleRemapper : public AudioProcessor {
                 if (mappedValue < minNote) {
                     break;
                 }
-                notesMap.set(i, mappedValue);
+                notesMap.set(i, mappedValue + root);
                 prevNote = mappedValue;
                 intervalIndex = intervalIndex - 1 < 0 ? tones - 1 : intervalIndex - 1;
             }
@@ -160,7 +160,7 @@ class MidiScaleRemapper : public AudioProcessor {
                 if (mappedValue > maxNote) {
                     break;
                 }
-                notesMap.set(i, mappedValue);
+                notesMap.set(i, mappedValue + root);
                 nextNote = mappedValue;
                 intervalIndex = intervalIndex + 1 > tones - 1 ? 0 : intervalIndex + 1;
             }

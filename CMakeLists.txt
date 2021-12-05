@@ -53,7 +53,7 @@ target_compile_definitions(${BINARY_NAME} PRIVATE
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
     P_WIDTH=550
-    P_HEIGHT=450
+    P_HEIGHT=460
 )
 
 target_link_libraries(${BINARY_NAME} PRIVATE
