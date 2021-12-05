@@ -70,11 +70,15 @@ jobs:
     outputs: 
         upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-    - name: Get tag
+    - name: Get Tag
       id: tag
       uses: dawidd6/action-get-tag@v1
       with:
         strip_v: true
+
+    - name: Extract Release Notes
+      id: extract-release-notes
+      uses: ffurrer2/extract-release-notes@v1
 
     - name: Download All Artifacts
       uses: actions/download-artifact@v2
@@ -85,4 +89,5 @@ jobs:
         artifactContentType: application/zip
         token: ${{ secrets.GH_RELEASE }}
         name: ${{steps.tag.outputs.tag}}
+        body: ${{ steps.extract-release-notes.outputs.release_notes }}
         prerelease: true
