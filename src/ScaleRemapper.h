@@ -12,7 +12,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     AudioProcessorValueTreeState::ParameterLayout p;
 
     p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
-    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 12, defaultTonics));
+    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 1, scaleLength, defaultTonics));
     p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, defaultIndex));
     p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, defaultMode));
     p.add(std::make_unique<AudioParameterInt>("baseOctave", "Base Octave", 0, 10, 4));
@@ -113,10 +113,9 @@ class MidiScaleRemapper : public AudioProcessor {
         int octave = dynamic_cast<AudioParameterInt *>(parameters.getParameter("baseOctave"))->get();
         int root = dynamic_cast<AudioParameterInt *>(parameters.getParameter("root"))->get();
 
-        const int notesInOctave = 12;
         const int minNote = 0;
         const int maxNote = 127;
-        const int baseNote = octave * notesInOctave;
+        const int baseNote = octave * scaleLength;
 
         int intervalsSum = 0;
         Array<int> intervals = {};
@@ -124,15 +123,15 @@ class MidiScaleRemapper : public AudioProcessor {
             auto istr = std::to_string(i);
             int val = dynamic_cast<AudioParameterInt *>(parameters.getParameter("interval" + istr))->get();
             intervalsSum += val;
-            if (intervalsSum > notesInOctave) {
+            if (intervalsSum > scaleLength) {
                 intervalsSum -= val;
                 break;
             }
             intervals.insert(i, val);
         }
 
-        if (intervalsSum < notesInOctave) {
-            intervals.insert(intervals.size(), notesInOctave - intervalsSum);
+        if (intervalsSum < scaleLength) {
+            intervals.insert(intervals.size(), scaleLength - intervalsSum);
         }
 
         const int tones = intervals.size();
