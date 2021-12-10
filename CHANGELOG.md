@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2021-12-10
+
+### Changed
+
+* removed loading indicator
+
+### Fixed
+
+* [ui] index was set to 0 after first scale switching
+* initial scale intervals were set to follow default scale (major)
 
 ## [0.4.0] - 2021-12-10
 
