@@ -3,20 +3,25 @@
 #include "CustomEditor.h"
 
 AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
+    const int scaleLength = 12;
+    const int defaultTonics = 7;
+    const float defaultIndex = 0.0f;
+    const float defaultMode = 0.17f;
+    const Array<int> defaultScaleIntervals = {2, 2, 1, 2, 2, 2, 1};
+
     AudioProcessorValueTreeState::ParameterLayout p;
 
     p.add(std::make_unique<AudioParameterBool>("transformEnabled", "Enable transform", true));
-    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 12, 7));
-    p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, 0.0f));
-    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, 0.17f));
+    p.add(std::make_unique<AudioParameterInt>("tonics", "Tonics Count", 3, 12, defaultTonics));
+    p.add(std::make_unique<AudioParameterFloat>("index", "Scale Index", 0.0f, 1.0f, defaultIndex));
+    p.add(std::make_unique<AudioParameterFloat>("mode", "Mode Index", 0.0f, 1.0f, defaultMode));
     p.add(std::make_unique<AudioParameterInt>("baseOctave", "Base Octave", 0, 10, 4));
     p.add(std::make_unique<AudioParameterInt>("root", "Root Note", 0, 11, 0));
 
-    const int scaleLength = 12;
-
     for (size_t i = 0; i < scaleLength; i++) {
         auto istr = std::to_string(i);
-        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, 1));
+        auto defaultInterval = defaultScaleIntervals[i];
+        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, defaultInterval));
     }
 
     return p;
