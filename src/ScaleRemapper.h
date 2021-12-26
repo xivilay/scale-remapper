@@ -47,11 +47,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
     AudioProcessorEditor *createEditor() {
         auto *editor = new CustomEditor(*this);
-
-        editor->setResizable(true, true);
-        editor->setResizeLimits(P_WIDTH, P_HEIGHT, P_WIDTH * 2, P_HEIGHT * 2);
         editor->setSize(P_WIDTH, P_HEIGHT);
-
         return editor;
     }
 

@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.4.2] - 2021-12-26
+
+### Changed
+
+* [ui] restyled color theme
+* resticted window resize
+
 ## [0.4.1] - 2021-12-10
 
 ### Changed
