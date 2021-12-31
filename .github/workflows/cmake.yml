@@ -15,7 +15,7 @@ jobs:
   build:
     strategy:
       matrix:
-        runner: ['windows']
+        runner: ['windows', 'ubuntu', 'macos']
     runs-on: ${{ matrix.runner }}-latest
     name: ${{ matrix.runner }}
     steps:
