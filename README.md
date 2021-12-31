@@ -1,5 +1,5 @@
 # ScaleRemapper
 
-Midi only plugin. Remaps any possible scale to white keys of the standard midi-keyboard.
+Midi only plugin. Remaps white keys of the standard midi-keyboard to any possible music scale.
 
-![image](https://github.com/xivilay/scale-remapper-ui/raw/master/assets/screen.png)
+![image](./screen.png)
