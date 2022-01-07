@@ -6,7 +6,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(PROJECT_NAME "${PROJECT_NAME}Dev")
 endif()
 
-set(VERSION "0.4.2")
+set(VERSION "0.5.1")
 set(JUCE_DIR "external/juce")
 set(SRC_DIR "./src")
 
@@ -41,7 +41,7 @@ juce_add_plugin(${PROJECT_NAME}
     NEEDS_MIDI_OUTPUT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
     PLUGIN_CODE Xiv8
-    FORMATS VST3
+    FORMATS VST3 Standalone
 )
 
 juce_add_binary_data(BinaryData SOURCES
@@ -61,7 +61,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
     P_WIDTH=550
-    P_HEIGHT=500
+    P_HEIGHT=750
 )
 
 if(BUILD_ASIO)

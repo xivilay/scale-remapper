@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.5.1] - 2022-01-07
+
+### Added
+
+* [ui] interactive keyboard feature
+
 ## [0.4.2] - 2021-12-26
 
 ### Changed
