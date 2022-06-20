@@ -2,8 +2,10 @@
 
 #include "CustomEditor.h"
 
+const int standardKeyboardKeysCount = 12;
+const int scaleLength = 12;
+
 AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
-    const int scaleLength = 12;
     const int defaultTonics = 7;
     const float defaultIndex = 0.0f;
     const float defaultMode = 0.17f;
@@ -92,7 +94,7 @@ class MidiScaleRemapper : public AudioProcessor {
     bool shouldMute(int noteIndex) { return !isWhiteNote(noteIndex); }
 
     bool isWhiteNote(int noteIndex) {
-        int i = noteIndex % scaleLength;
+        int i = noteIndex % standardKeyboardKeysCount;
         if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10) return false;
         return true;
     }
@@ -199,7 +201,6 @@ class MidiScaleRemapper : public AudioProcessor {
         return processedMidi;
     }
 
-    const int scaleLength = 12;
     HashMap<int, int> notesMap;
 
     AudioProcessorValueTreeState parameters;
