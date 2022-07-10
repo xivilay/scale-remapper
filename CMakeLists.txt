@@ -9,6 +9,7 @@ endif()
 set(VERSION "0.5.1")
 set(JUCE_DIR "external/juce")
 set(SRC_DIR "./src")
+set(FORMATS "Standalone" "VST3")
 
 set(REACT_JUCE "react_juce")
 # see https://github.com/nick-thompson/react-juce/tree/master/react_juce
@@ -32,6 +33,13 @@ if(WIN32)
     endif()
 endif(WIN32)
 
+set(VST2_DIR "sdk/vst2")
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${VST2_DIR})
+    set(BUILD_VST2 1)
+    juce_set_vst2_sdk_path(${VST2_DIR})
+    list(APPEND FORMATS "VST")
+endif()
+
 target_compile_definitions(${REACT_JUCE} INTERFACE REACTJUCE_USE_DUKTAPE=1)
 
 juce_add_plugin(${PROJECT_NAME}
@@ -41,7 +49,7 @@ juce_add_plugin(${PROJECT_NAME}
     NEEDS_MIDI_OUTPUT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
     PLUGIN_CODE Xiv8
-    FORMATS VST3 Standalone
+    FORMATS ${FORMATS}
 )
 
 juce_add_binary_data(BinaryData SOURCES
@@ -57,12 +65,18 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
     P_WIDTH=550
     P_HEIGHT=750
 )
+
+if(BUILD_VST2)
+    message(STATUS "Adding VST2...")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=1)
+else()
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=0)
+endif(BUILD_VST2)
 
 if(BUILD_ASIO)
     message(STATUS "Adding ASIO...")
