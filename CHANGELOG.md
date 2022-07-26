@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.5.2] - 2022-07-26
+
+### Added
+
+* lv2 support
+* vst support for hosts incompatible with vst3 midi (won't be distributed due to the license limitations)
+
 ## [0.5.1] - 2022-01-07
 
 ### Added

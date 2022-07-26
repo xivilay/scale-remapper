@@ -52,7 +52,7 @@ jobs:
 
       - name: Zip
         working-directory: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
-        run: cmake -E tar cv ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z --format=7zip VST3/${{env.PROJECT_NAME}}.vst3
+        run: cmake -E tar cv ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{env.PROJECT_NAME}}.lv2 VST3/${{env.PROJECT_NAME}}.vst3
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2

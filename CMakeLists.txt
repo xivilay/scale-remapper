@@ -9,7 +9,7 @@ endif()
 set(VERSION "0.5.1")
 set(JUCE_DIR "external/juce")
 set(SRC_DIR "./src")
-set(FORMATS "Standalone" "VST3")
+set(FORMATS "Standalone" "LV2" "VST3")
 
 set(REACT_JUCE "react_juce")
 # see https://github.com/nick-thompson/react-juce/tree/master/react_juce
