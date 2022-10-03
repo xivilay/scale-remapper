@@ -195,6 +195,14 @@ class MidiScaleRemapper : public AudioProcessor {
                         message = MidiMessage::noteOff(message.getChannel(), transformed, vel);
                     }
                     processedMidi.addEvent(message, time);
+                } else if (isNoteOn) {
+                    if (savedXml.get() != nullptr) {
+                        parameters.replaceState(ValueTree::fromXml(*savedXml));
+                    } else {
+                        auto state = parameters.copyState();
+                        auto xml = state.createXml();
+                        savedXml.swap(xml);
+                    }
                 }
             }
         }
@@ -204,6 +212,7 @@ class MidiScaleRemapper : public AudioProcessor {
     HashMap<int, int> notesMap;
 
     AudioProcessorValueTreeState parameters;
+    std::unique_ptr<XmlElement> savedXml;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiScaleRemapper)
 };
