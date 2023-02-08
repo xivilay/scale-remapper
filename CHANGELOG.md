@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2023-02-08
+
+### Changed
+
+* [ui] event system to support correct multiple parameters change
+
 ## [0.5.2] - 2022-07-26
 
 ### Added
