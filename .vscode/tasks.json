@@ -1,0 +1,65 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "build",
+            "path": "ui",
+            "problemMatcher": [],
+            "label": "yarn build ui",
+            "detail": "webpack --mode=production",
+            "hide": true
+        },
+        {
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "-A",
+                "x64",
+                "../",
+                "-D",
+                "CMAKE_BUILD_TYPE=Release"
+            ],
+            "label": "cmake prepare build",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "dependsOn": [
+                "yarn build ui"
+            ],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                ".",
+                "--config",
+                "Release"
+            ],
+            "label": "cmake build",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "cmake prepare build"
+            ],
+            "hide": true
+        },
+        {
+            "type": "process",
+            "command": "./ScaleRemapper_artefacts/Release/Standalone/ScaleRemapper.exe",
+            "label": "build & run executable",
+            "options": {
+                "cwd": "${workspaceRoot}/build/"
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "cmake build"
+            ]
+        }
+    ]
+}
