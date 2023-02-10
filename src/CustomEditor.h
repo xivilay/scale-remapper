@@ -2,12 +2,14 @@
 
 #include <BinaryData.h>
 
+#include "lumi/Mediator.h"
+
 using namespace reactjuce;
 
 class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter::Listener, public Timer {
    public:
     CustomEditor(AudioProcessor& proc)
-        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot) {
+        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot), mediator(appRoot) {
         auto& params = processor.getParameters();
         paramReadouts.resize(static_cast<size_t>(params.size()));
 
@@ -53,6 +55,7 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         for (auto& p : processor.getParameters()) {
             p->removeListener(this);
         }
+        mediator.onQuit();
     }
 
     void parameterValueChanged(int parameterIndex, float newValue) {
@@ -110,6 +113,14 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
 
             return var::undefined();
         });
+
+        engine->registerNativeMethod("sendComputedKeysData", [this](const var::NativeFunctionArgs& args) {
+            int a = args.arguments[0];
+
+            mediator.sendCommand(a);
+
+            return var::undefined();
+        });
     }
     void afterBundleEvaluated() {
         for (auto& p : processor.getParameters()) parameterValueChanged(p->getParameterIndex(), p->getValue());
@@ -118,6 +129,8 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
     std::shared_ptr<EcmascriptEngine> engine;
     ReactApplicationRoot appRoot;
     AppHarness harness;
+
+    Mediator mediator;
 
     File bundleFile;
 
