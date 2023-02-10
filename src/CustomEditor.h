@@ -93,23 +93,9 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
 
    private:
     void beforeBundleEvaluated() {
-        engine->registerNativeMethod("beginParameterChangeGesture", [this](const var::NativeFunctionArgs& args) {
-            if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
-                it->second->beginChangeGesture();
-
-            return var::undefined();
-        });
-
         engine->registerNativeMethod("setParameterValueNotifyingHost", [this](const var::NativeFunctionArgs& args) {
             if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
                 it->second->setValueNotifyingHost(args.arguments[1]);
-
-            return var::undefined();
-        });
-
-        engine->registerNativeMethod("endParameterChangeGesture", [this](const var::NativeFunctionArgs& args) {
-            if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
-                it->second->endChangeGesture();
 
             return var::undefined();
         });
