@@ -15,6 +15,7 @@ class CustomProgram : public roli::Block::Program {
         int rootColor;
         int root;
         int state;
+        int colorMode;
         int fullColors[12];
     
         void initialise() {
@@ -42,8 +43,12 @@ class CustomProgram : public roli::Block::Program {
             for (int i = 0; i < 12; i++) {
                 int highlighted = (state >> i) & 1;
                 int num = 12 - 1 - i;
-                // int color = num == root ? rootColor : keyColor;
-                int color = fullColors[num];
+                int color;
+                if (colorMode == 1) {
+                    color = fullColors[num];
+                } else {
+                    color = num == root ? rootColor : keyColor;
+                }
                 int fill = highlighted == 1 ? color : makeARGB(255, 0, 0, 0);
                 fillPixel(fill, num, 0);
                 fillPixel(fill, num + 12, 0);
@@ -53,6 +58,7 @@ class CustomProgram : public roli::Block::Program {
             if (state == a) return;
             state = a;
             root = a >> 12;
+            colorMode = a >> 16;
             int octave = getLocalConfig(octaveId);
             renderKeys();
 
