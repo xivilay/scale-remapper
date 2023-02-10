@@ -27,8 +27,9 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
             p->addListener(this);
         }
 
-#if JUCE_DEBUG
         File exeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
+#if JUCE_DEBUG
+        
         File bundle = exeDir.getChildFile("js/bundle.js");
 
         jassert(bundle.existsAsFile());
@@ -44,6 +45,12 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         engine->evaluateInline(String::fromUTF8(BinaryData::bundle_js));
         afterBundleEvaluated();
 #endif
+
+        File localScales = exeDir.getChildFile("scales.txt");
+        if (localScales.existsAsFile()) {
+            auto fileText = localScales.loadFileAsString();
+            appRoot.dispatchEvent("getLocalScales", fileText);
+        }
 
         addAndMakeVisible(appRoot);
 
