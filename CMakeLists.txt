@@ -7,13 +7,15 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 endif()
 
 set(VERSION "0.6.1")
-set(JUCE_DIR "external/juce")
-set(SRC_DIR "./src")
+
 set(FORMATS "Standalone" "LV2" "VST3")
 
+set(SRC_DIR "./src")
+set(JUCE_DIR "external/juce")
 set(REACT_JUCE "react_juce")
-# see https://github.com/nick-thompson/react-juce/tree/master/react_juce
-set(REACT_JUCE_DIR "external/react-juce/${REACT_JUCE}")  # path to REACT JUCE
+set(ROLI_BLOCKS "roli_blocks_basics")
+set(BLOCKS_DIR "external/${ROLI_BLOCKS}")
+set(REACT_JUCE_DIR "external/react-juce/${REACT_JUCE}")
 set(JS_BUNDLE_PATH "./ui/build/js/bundle.js")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -23,6 +25,7 @@ project(${PROJECT_NAME} VERSION ${VERSION})
 
 add_subdirectory(${JUCE_DIR} "juce")
 
+juce_add_module(${BLOCKS_DIR})
 juce_add_module(${REACT_JUCE_DIR})
 
 if(WIN32)
@@ -102,6 +105,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     juce::juce_gui_basics
     juce::juce_gui_extra
 
+    ${ROLI_BLOCKS}
     ${REACT_JUCE}
     BinaryData
 )
