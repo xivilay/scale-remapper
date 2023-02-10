@@ -13,6 +13,13 @@
             "request": "attach",
             "name": "Attach to AudioHost",
             "pid": "${command:pickMyProcess}"
+        },
+        {
+            "name": "start debug",
+            "type": "cppvsdbg",
+            "cwd": "${workspaceRoot}",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/ScaleRemapperDev_artefacts/Debug/Standalone/ScaleRemapperDev.exe"
         }
     ]
 }

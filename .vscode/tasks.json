@@ -11,6 +11,24 @@
             "hide": true
         },
         {
+            "type": "npm",
+            "script": "build-dev",
+            "path": "ui",
+            "problemMatcher": [],
+            "label": "yarn build ui debug",
+            "detail": "webpack --mode=development",
+            "hide": true
+        },
+        {
+            "type": "process",
+            "command": "xcopy",
+            "args": ["/y", "${workspaceRoot}\\ui\\build\\js", "${workspaceRoot}\\build\\ScaleRemapperDev_artefacts\\Debug\\Standalone\\js\\"],
+            "problemMatcher": [],
+            "label": "copy js assets",
+            "dependsOn": ["yarn build ui debug"],
+            "hide": true
+        },
+        {
             "type": "process",
             "command": "cmake",
             "args": [
@@ -26,6 +44,26 @@
             },
             "dependsOn": [
                 "yarn build ui"
+            ],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "-A",
+                "x64",
+                "../",
+                "-D",
+                "CMAKE_BUILD_TYPE=Debug"
+            ],
+            "label": "cmake prepare build debug",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "dependsOn": [
+                "copy js assets"
             ],
             "problemMatcher": [],
             "hide": true
@@ -51,6 +89,25 @@
         },
         {
             "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                ".",
+                "--config",
+                "Debug"
+            ],
+            "label": "cmake build debug",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "cmake prepare build debug"
+            ],
+            "hide": true
+        },
+        {
+            "type": "process",
             "command": "./ScaleRemapper_artefacts/Release/Standalone/ScaleRemapper.exe",
             "label": "build & run executable",
             "options": {
@@ -59,6 +116,18 @@
             "problemMatcher": [],
             "dependsOn": [
                 "cmake build"
+            ]
+        },
+        {
+            "type": "process",
+            "command": "./ScaleRemapperDev_artefacts/Debug/Standalone/ScaleRemapperDev.exe",
+            "label": "build & run executable (debug)",
+            "options": {
+                "cwd": "${workspaceRoot}/build/"
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "cmake build debug"
             ]
         }
     ]
