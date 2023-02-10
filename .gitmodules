@@ -7,3 +7,6 @@
 [submodule "external/juce"]
 	path = external/juce
 	url = https://github.com/juce-framework/JUCE
+[submodule "external/roli_blocks_basics"]
+	path = external/roli_blocks_basics
+	url = https://github.com/WeAreROLI/roli_blocks_basics
