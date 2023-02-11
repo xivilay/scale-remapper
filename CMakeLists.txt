@@ -52,6 +52,7 @@ juce_add_plugin(${PROJECT_NAME}
     NEEDS_MIDI_OUTPUT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
     PLUGIN_CODE Xiv8
+    ICON_SMALL "${SRC_DIR}/icons/small.png"
     FORMATS ${FORMATS}
 )
 
@@ -70,8 +71,6 @@ target_sources(${PROJECT_NAME} PRIVATE
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
-    P_WIDTH=550
-    P_HEIGHT=750
 )
 
 if(BUILD_VST2)

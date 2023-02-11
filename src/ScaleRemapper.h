@@ -49,7 +49,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
     AudioProcessorEditor *createEditor() {
         auto *editor = new CustomEditor(*this);
-        editor->setSize(P_WIDTH, P_HEIGHT);
+        editor->setSize(550, 750);
         return editor;
     }
 
