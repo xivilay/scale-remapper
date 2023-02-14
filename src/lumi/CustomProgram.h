@@ -16,6 +16,7 @@ class CustomProgram : public roli::Block::Program {
         int rootColor;
         int root;
         int state;
+        int keysState;
         int colorMode;
         int fullColors[12];
         int whiteKeys[14];
@@ -67,7 +68,7 @@ class CustomProgram : public roli::Block::Program {
         void renderKeys() {
             if (remapIsOn == 0) {
                 for (int i = 0; i < 12; i++) {
-                    int highlighted = (state >> i) & 1;
+                    int highlighted = (keysState >> i) & 1;
                     int num = 12 - 1 - i;
                     int color;
                     if (colorMode == 1) {
@@ -82,11 +83,11 @@ class CustomProgram : public roli::Block::Program {
             } else {
                 int selectedCount = 0;
                 for (int i = 0; i < 12; i++) {
-                    selectedCount += ((state >> i) & 1);
+                    selectedCount += ((keysState >> i) & 1);
                 }
                 int scaleIndex = 0;
                 for (int i = root; i < 12 + root; i++) {
-                    int highlighted = (state >> (11 - i%12)) & 1;
+                    int highlighted = (keysState >> (11 - i%12)) & 1;
                     int num = (12+i) % 12;
                     
                     if (highlighted == 1) {
@@ -112,7 +113,8 @@ class CustomProgram : public roli::Block::Program {
         }
         void handleMessage(int a, int b, int c) {
             if (state == a) return;
-            state =      getMidBits(a, 0, 12);
+            state = a;
+            keysState =  getMidBits(a, 0, 12);
             root =       getMidBits(a, 12, 4);
             colorMode =  getMidBits(a, 12+4, 1);
             remapIsOn =  getMidBits(a, 12+4+1, 1);
