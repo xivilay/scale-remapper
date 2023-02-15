@@ -44,6 +44,14 @@ jobs:
         run: |
             sudo apt-get update && sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev
 
+      - name: Patch Blocks
+        working-directory: ./external/roli_blocks_basics
+        run: git apply ../../scripts/patches/roli.patch
+
+      - name: Patch React-Juce
+        working-directory: ./external/react-juce
+        run: git apply ../../scripts/patches/react.patch
+
       - name: Configure CMake for Standalone
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=1
 
