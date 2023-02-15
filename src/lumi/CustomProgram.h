@@ -11,10 +11,12 @@ class CustomProgram : public roli::Block::Program {
         const int globalKeyColor = 34;
         const int rootKeyColor = 35;
         const int octaveId = 4;
+        const int colorModeId = 64;
         int dimKeyColor;
         int keyColor;
         int rootColor;
         int root;
+        int octave;
         int state;
         int keysState;
         int colorMode;
@@ -27,6 +29,8 @@ class CustomProgram : public roli::Block::Program {
             keyColor = getLocalConfig(globalKeyColor);
             rootColor = getLocalConfig(rootKeyColor);
             root = getLocalConfig(rootId);
+            octave = getLocalConfig(octaveId);
+            sendMessageToHost(octaveId, octave, 0);
             initColors();
             initWhiteKeys();
         }
@@ -118,10 +122,28 @@ class CustomProgram : public roli::Block::Program {
             root =       getMidBits(a, 12, 4);
             colorMode =  getMidBits(a, 12+4, 1);
             remapIsOn =  getMidBits(a, 12+4+1, 1);
-            int octave = getLocalConfig(octaveId);
             renderKeys();
+        }
+        void handleButtonDown (int index) {
+            if (index == 1 || index == 2) {
+                int nextOctave;
+                if (index == 1) {
+                    nextOctave = --octave;
+                }
+                if (index == 2) {
+                    nextOctave = ++octave;
+                }
+                if (nextOctave < -4 || nextOctave > 8) return;
+                setLocalConfig(octaveId, nextOctave);
+                sendMessageToHost(octaveId, nextOctave, 0);
+            }
+        }
 
-            sendMessageToHost(root, 0, 0);
+        void handleButtonUp (int index) {
+            if (index == 0) {
+                colorMode = colorMode ^ 1;
+                sendMessageToHost(colorModeId, colorMode, 0);
+            }
         }
         )littlefoot";
     }

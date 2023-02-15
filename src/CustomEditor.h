@@ -9,7 +9,7 @@ using namespace reactjuce;
 class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter::Listener, public Timer {
    public:
     CustomEditor(AudioProcessor& proc)
-        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot), mediator(appRoot) {
+        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot), mediator(appRoot, proc) {
         auto& params = processor.getParameters();
         paramReadouts.resize(static_cast<size_t>(params.size()));
 
