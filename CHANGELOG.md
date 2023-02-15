@@ -21,6 +21,11 @@ All notable changes to this project will be documented in this file.
     2 1 2 2 1 3 1 Harmonic Minor
     ```
 
+### Changed
+
+* updated JUCE to 7.0.5
+* [ui] updated minor deps
+
 ## [0.6.1] - 2023-02-08
 
 ### Changed

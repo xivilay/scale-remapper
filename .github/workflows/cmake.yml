@@ -46,11 +46,11 @@ jobs:
 
       - name: Patch Blocks
         working-directory: ./external/roli_blocks_basics
-        run: git apply ../../scripts/patches/roli.patch
+        run: git apply -v ../../scripts/patches/roli.patch
 
       - name: Patch React-Juce
         working-directory: ./external/react-juce
-        run: git apply ../../scripts/patches/react.patch
+        run: git apply -v ../../scripts/patches/react.patch
 
       - name: Configure CMake for Standalone
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=1
