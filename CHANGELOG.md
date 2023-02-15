@@ -1,6 +1,26 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2023-02-15
+
+### Fixed
+
+* LV2 plugins didn't work due to incorrect URL
+* [ui] incorrect sizing of list elements
+
+### Added
+
+* [ui] colors mode for remapped keyboard
+* buttons to cycle through the modes with the same keys selected
+* icon for standalone app
+* [LUMI keys](https://roli.com/products/blocks/lumi-keys-studio-edition) hardware support (4 modes, if plugin is disabled it will only highlight the key, otherwise it will highlight remapped keys, power button is changing color mode)
+* custom scales override is possible if `scales.txt` is placed near the plugin binary file. Text file should list scales in format `intervals scaleName`, ex:
+    
+    ```
+    2 1 2 2 2 2 1 Melodic Minor 
+    2 1 2 2 1 3 1 Harmonic Minor
+    ```
+
 ## [0.6.1] - 2023-02-08
 
 ### Changed

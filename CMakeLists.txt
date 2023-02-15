@@ -6,7 +6,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(PROJECT_NAME "${PROJECT_NAME}Dev")
 endif()
 
-set(VERSION "0.6.1")
+set(VERSION "0.7.0")
 
 set(FORMATS "")
 
