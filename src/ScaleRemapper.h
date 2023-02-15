@@ -20,7 +20,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     p.add(std::make_unique<AudioParameterInt>("baseOctave", "Base Octave", 0, 10, 4));
     p.add(std::make_unique<AudioParameterInt>("root", "Root Note", 0, 11, 0));
 
-    for (size_t i = 0; i < scaleLength; i++) {
+    for (int i = 0; i < scaleLength; i++) {
         auto istr = std::to_string(i);
         auto defaultInterval = defaultScaleIntervals[i];
         p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, defaultInterval));
@@ -49,7 +49,7 @@ class MidiScaleRemapper : public AudioProcessor {
 
     AudioProcessorEditor *createEditor() {
         auto *editor = new CustomEditor(*this);
-        editor->setSize(P_WIDTH, P_HEIGHT);
+        editor->setSize(550, 750);
         return editor;
     }
 

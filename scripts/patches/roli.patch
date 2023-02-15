@@ -1,0 +1,22 @@
+diff --git a/topology/internal/roli_MIDIDeviceDetector.cpp b/topology/internal/roli_MIDIDeviceDetector.cpp
+index 4b77ff0..191c7e5 100644
+--- a/topology/internal/roli_MIDIDeviceDetector.cpp
++++ b/topology/internal/roli_MIDIDeviceDetector.cpp
+@@ -112,7 +112,7 @@ struct MIDIDeviceDetector  : public PhysicalTopologySource::DeviceDetector
+             {
+                 MidiInputOutputPair pair;
+                 pair.input = input;
+-
++                auto inputId = input.identifier; // winRT workaround
+                 juce::String cleanedInputName = cleanBlocksDeviceName (input.name);
+ 
+                 int inputOccurences = 0;
+@@ -124,7 +124,7 @@ struct MIDIDeviceDetector  : public PhysicalTopologySource::DeviceDetector
+ 
+                 for (const auto& output : midiOutputs)
+                 {
+-                    if (cleanBlocksDeviceName (output.name) == cleanedInputName)
++                    if (cleanBlocksDeviceName (output.name) == cleanedInputName || output.identifier == inputId)
+                     {
+                         if (outputOccurences == inputOccurences)
+                         {

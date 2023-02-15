@@ -3,16 +3,29 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "CMake Standalone",
-            "program": "${command:cmake.launchTargetPath}",
+            "name": "LLDB - Launch Debug",
+            "program": "${workspaceRoot}/build/ScaleRemapperDev_artefacts/Debug/Standalone/ScaleRemapperDev.exe",
             "args": [],
             "cwd": "${workspaceFolder}"
         },
         {
             "type": "lldb",
             "request": "attach",
-            "name": "Attach to AudioHost",
-            "pid": "${command:pickMyProcess}"
+            "name": "LLDB - Attach to AudioHost",
+            "program": "AudioPluginHost.exe"
+        },
+        {
+            "name": "VSDB - Launch Debug",
+            "type": "cppvsdbg",
+            "cwd": "${workspaceRoot}",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/ScaleRemapperDev_artefacts/Debug/Standalone/ScaleRemapperDev.exe"
+        },
+        {
+            "name": "VSDB - Attach to AudioHost",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
         }
     ]
 }

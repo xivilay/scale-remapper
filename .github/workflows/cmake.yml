@@ -27,6 +27,8 @@ jobs:
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
+        with:
+          node-version: 16
 
       - name: Set Up Yarn
         run: npm install -g yarn
@@ -44,10 +46,24 @@ jobs:
         run: |
             sudo apt-get update && sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev
 
-      - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Patch Blocks
+        working-directory: ./external/roli_blocks_basics
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/roli.patch
 
-      - name: Build
+      - name: Patch React-Juce
+        working-directory: ./external/react-juce
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
+
+      - name: Configure CMake for Standalone
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=1
+
+      - name: Build Standalone
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Configure CMake for Plugins
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=0
+
+      - name: Build Plugins
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Zip

@@ -2,12 +2,14 @@
 
 #include <BinaryData.h>
 
+#include "lumi/Mediator.h"
+
 using namespace reactjuce;
 
 class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter::Listener, public Timer {
    public:
     CustomEditor(AudioProcessor& proc)
-        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot) {
+        : AudioProcessorEditor(proc), engine(std::make_shared<EcmascriptEngine>()), appRoot(engine), harness(appRoot), mediator(appRoot, proc) {
         auto& params = processor.getParameters();
         paramReadouts.resize(static_cast<size_t>(params.size()));
 
@@ -25,8 +27,9 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
             p->addListener(this);
         }
 
-#if JUCE_DEBUG
         File exeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
+#if JUCE_DEBUG
+        
         File bundle = exeDir.getChildFile("js/bundle.js");
 
         jassert(bundle.existsAsFile());
@@ -43,6 +46,12 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         afterBundleEvaluated();
 #endif
 
+        File localScales = exeDir.getChildFile("scales.txt");
+        if (localScales.existsAsFile()) {
+            auto fileText = localScales.loadFileAsString();
+            appRoot.dispatchEvent("getLocalScales", fileText);
+        }
+
         addAndMakeVisible(appRoot);
 
         setSize(400, 200);
@@ -53,6 +62,7 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         for (auto& p : processor.getParameters()) {
             p->removeListener(this);
         }
+        mediator.onQuit();
     }
 
     void parameterValueChanged(int parameterIndex, float newValue) {
@@ -90,13 +100,6 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
 
    private:
     void beforeBundleEvaluated() {
-        engine->registerNativeMethod("beginParameterChangeGesture", [this](const var::NativeFunctionArgs& args) {
-            if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
-                it->second->beginChangeGesture();
-
-            return var::undefined();
-        });
-
         engine->registerNativeMethod("setParameterValueNotifyingHost", [this](const var::NativeFunctionArgs& args) {
             if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
                 it->second->setValueNotifyingHost(args.arguments[1]);
@@ -104,9 +107,10 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
             return var::undefined();
         });
 
-        engine->registerNativeMethod("endParameterChangeGesture", [this](const var::NativeFunctionArgs& args) {
-            if (auto it = parameters.find(args.arguments[0].toString()); it != parameters.cend())
-                it->second->endChangeGesture();
+        engine->registerNativeMethod("sendComputedKeysData", [this](const var::NativeFunctionArgs& args) {
+            int a = args.arguments[0];
+
+            mediator.sendCommand(a);
 
             return var::undefined();
         });
@@ -118,6 +122,8 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
     std::shared_ptr<EcmascriptEngine> engine;
     ReactApplicationRoot appRoot;
     AppHarness harness;
+
+    Mediator mediator;
 
     File bundleFile;
 
