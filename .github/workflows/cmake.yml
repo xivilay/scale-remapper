@@ -61,7 +61,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Configure CMake for Plugins
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=0
 
       - name: Build Plugins
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
