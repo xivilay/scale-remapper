@@ -52,6 +52,7 @@ juce_add_plugin(${PROJECT_NAME}
     NEEDS_MIDI_OUTPUT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
     PLUGIN_CODE Xiv8
+    VST3_CATEGORIES "Instrument Tools"
     ICON_SMALL "${SRC_DIR}/icons/small.png"
     FORMATS ${FORMATS}
 )
