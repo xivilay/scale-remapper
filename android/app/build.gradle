@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.juce.pluginhost"
+        applicationId "dev.xivilay.scaleremapper"
         minSdkVersion    29
         targetSdkVersion 29
         externalNativeBuild {
