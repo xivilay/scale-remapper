@@ -4,6 +4,7 @@ set(PROJECT_NAME "ScaleRemapper")
 
 if(ANDROID_PLATFORM)
     set(PROJECT_NAME "juce_jni")
+    set(CMAKE_PLUGIN_IS_STANDALONE 1)
 else()
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         set(PROJECT_NAME "${PROJECT_NAME}Dev")
@@ -91,6 +92,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+    JucePlugin_Build_Standalone=1
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
 )
@@ -135,8 +137,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     BinaryData
 )
 
+if (NOT ANDROID)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        juce::juce_audio_plugin_client
+    )
+endif()
+
 if(ANDROID)
     message(STATUS "Building for ANDROID...")
+
     string(REPLACE "\\" "/" ANDROID_NDK ${ANDROID_NDK})
 
     set(CPU_FEATURES_LIB "cpufeatures")
@@ -208,6 +217,8 @@ if(ANDROID)
     )
 
     target_link_libraries(${PROJECT_NAME} PRIVATE
+        juce::juce_audio_plugin_client_utils
+        juce::juce_audio_plugin_client_Standalone
         "juceAndroid"
     )
 endif(ANDROID)
