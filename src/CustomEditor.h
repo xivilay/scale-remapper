@@ -28,7 +28,7 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         }
 
         File exeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
-#if JUCE_DEBUG
+#if (JUCE_DEBUG && !JUCE_ANDROID)
         
         File bundle = exeDir.getChildFile("js/bundle.js");
 
