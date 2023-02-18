@@ -1,12 +1,13 @@
 {
     "cmake.buildDirectory": "${workspaceFolder}/build",
-    "cmake.ctestArgs": ["--verbose"],
-    "cmake.configureArgs": [],
-    "cmake.preferredGenerators": ["Visual Studio 16 2019", "Ninja", "Unix Makefiles"],
+    "cmake.ctestArgs": [
+        "--verbose"
+    ],
     "cmake.configureOnOpen": true,
-    "lldb.showDisassembly": "auto",
-    "lldb.dereferencePointers": true,
     "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.default.cppStandard": "c++17",
-    "C_Cpp.default.includePath": ["${workspaceFolder}/**"]
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/external/**"
+    ],
+    "C_Cpp.autoAddFileAssociations": false
 }
