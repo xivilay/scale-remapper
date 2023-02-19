@@ -7,7 +7,13 @@
     "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.includePath": [
-        "${workspaceFolder}/external/**"
+        "${workspaceFolder}/build/juce_binarydata_BinaryData/JuceLibraryCode/",
+        "${workspaceFolder}/build/ScaleRemapperDev_artefacts/JuceLibraryCode/",
+        "${workspaceFolder}/build/ScaleRemapper_artefacts/JuceLibraryCode/",
+        "${workspaceFolder}/external/juce/modules",
+        "${workspaceFolder}/external/react-juce/",
+        "${workspaceFolder}/external/roli_blocks_basics",
+        "${workspaceFolder}/external/"
     ],
     "C_Cpp.autoAddFileAssociations": false
 }
