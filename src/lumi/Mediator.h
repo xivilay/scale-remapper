@@ -8,7 +8,8 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
    public:
     Mediator(reactjuce::ReactApplicationRoot& root, AudioProcessor& proc) : processor(proc) {
         appRoot = &root;
-        pts.addListener(this);
+        pts = new PhysicalTopologySource();
+        pts->addListener(this);
     }
     void onQuit() {
         if (b != nullptr) {
@@ -40,8 +41,8 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         appRoot->dispatchEvent("requestComputedKeysData");
         block.removeProgramLoadedListener(this);
     }
-    void topologyChanged() override {
-        auto currentTopology = pts.getCurrentTopology();
+    void topologyChanged() {
+        auto currentTopology = pts->getCurrentTopology();
         for (auto& block : currentTopology.blocks) {
             if (block->getType() == Block::lumiKeysBlock) {
                 b = block;
@@ -53,7 +54,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
             }
         }
     }
-    PhysicalTopologySource pts;
+    PhysicalTopologySource* pts = nullptr;
     Block::Program* p;
     Block* b = nullptr;
     reactjuce::ReactApplicationRoot* appRoot;
