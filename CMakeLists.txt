@@ -86,10 +86,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_WEB_BROWSER=0
 )
 
-if(WIN32 AND NOT CMAKE_PLUGIN_IS_STANDALONE) 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_USE_WINRT_MIDI=1) 
-endif()
-
 if(BUILD_VST2)
     message(STATUS "Adding VST2...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=1)

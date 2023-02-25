@@ -23,7 +23,8 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     for (int i = 0; i < scaleLength; i++) {
         auto istr = std::to_string(i);
         auto defaultInterval = defaultScaleIntervals[i];
-        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, defaultInterval));
+        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength,
+                                                  defaultInterval));
     }
 
     return p;
@@ -47,11 +48,7 @@ class MidiScaleRemapper : public AudioProcessor {
         }
     }
 
-    AudioProcessorEditor *createEditor() {
-        auto *editor = new CustomEditor(*this);
-        editor->setSize(550, 750);
-        return editor;
-    }
+    AudioProcessorEditor *createEditor() { return new CustomEditor(*this); }
 
     const String getName() const override { return ProjectInfo::projectName; }
 

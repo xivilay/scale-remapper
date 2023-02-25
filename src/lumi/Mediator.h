@@ -10,11 +10,16 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         appRoot = &root;
         pts.addListener(this);
     };
-    void onQuit() {
+    ~Mediator() {
         if (b != nullptr) {
             b->setProgram(nullptr);
+            b->removeProgramLoadedListener(this);
+            b->removeProgramEventListener(this);
+            b = nullptr;
         }
-    };
+
+        pts.removeListener(this);
+    }
     void sendCommand(int a) {
         if (b != nullptr) {
             Block::ProgramEventMessage e;
@@ -25,7 +30,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
     };
 
    private:
-    void handleProgramEvent(Block& source, const Block::ProgramEventMessage& event) {
+    void handleProgramEvent(Block&, const Block::ProgramEventMessage& event) {
         int messageId = event.values[0];
         int messageValue = event.values[1];
         if (messageId == octaveId) {
@@ -45,7 +50,6 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         for (auto& block : currentTopology.blocks) {
             if (block->getType() == Block::lumiKeysBlock) {
                 b = block;
-                p = block->getProgram();
                 block->setProgram(std::make_unique<CustomProgram>(*block));
                 block->addProgramLoadedListener(this);
                 block->addProgramEventListener(this);
@@ -54,8 +58,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         }
     };
     PhysicalTopologySource pts;
-    Block::Program* p;
-    Block* b = nullptr;
+    Block::Ptr b;
     reactjuce::ReactApplicationRoot* appRoot;
     AudioProcessor& processor;
 
@@ -63,4 +66,6 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
     const int octaveId = 4;
     const int octavesCount = 10;
     const int colorModeId = 64;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Mediator);
 };

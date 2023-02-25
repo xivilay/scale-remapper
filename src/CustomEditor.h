@@ -54,7 +54,7 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
 
         addAndMakeVisible(appRoot);
 
-        setSize(400, 200);
+        setSize(550, 750);
 
         startTimerHz(30);
     }
@@ -62,7 +62,6 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         for (auto& p : processor.getParameters()) {
             p->removeListener(this);
         }
-        mediator.onQuit();
     }
 
     void parameterValueChanged(int parameterIndex, float newValue) {

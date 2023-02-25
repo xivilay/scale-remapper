@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.1] - 2023-02-25
+
+### Fixed
+
+* Disable WinRT in plugins due to performance issues
+
 ## [0.7.0] - 2023-02-15
 
 ### Fixed
