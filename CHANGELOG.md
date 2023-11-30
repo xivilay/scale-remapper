@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.2] - 2023-11-30
+
+### Changed
+
+* [ui] updated packages and add support for web
+
 ## [0.7.1] - 2023-02-25
 
 ### Fixed
