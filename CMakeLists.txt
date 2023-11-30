@@ -6,7 +6,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(PROJECT_NAME "${PROJECT_NAME}Dev")
 endif()
 
-set(VERSION "0.7.2")
+set(VERSION "0.7.3")
 
 set(FORMATS "Standalone" "LV2" "VST3")
 
@@ -56,12 +56,15 @@ juce_add_plugin(${PROJECT_NAME}
     PRODUCT_NAME "${PROJECT_NAME}"
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
+    IS_MIDI_EFFECT TRUE
     PLUGIN_MANUFACTURER_CODE XivY
     PLUGIN_CODE Xiv8
     LV2URI "https://github.com/xivilay/scale-remapper"
     VST3_CATEGORIES "Instrument Tools"
     ICON_SMALL "${SRC_DIR}/icons/small.png"
     FORMATS ${FORMATS}
+    AU_SANDBOX_SAFE TRUE  
+    BUNDLE_ID "dev.xivilay.scaleRemapper"
 )
 
 juce_add_binary_data(BinaryData SOURCES
@@ -80,6 +83,13 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
 )
+
+IF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE 
+        JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
+    ) 
+    add_link_options("-Wl,-weak_reference_mismatches,weak")
+endif()
 
 if(BUILD_VST2)
     message(STATUS "Adding VST2...")

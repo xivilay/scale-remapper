@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.3] - 2023-11-30
+
+### Added
+
+* AUv3 build configurations
+
 ## [0.7.2] - 2023-11-30
 
 ### Changed
