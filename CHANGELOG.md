@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.4] - 2023-12-07
+
+### Changed
+
+* [ui] inner dependencies (music-theory)
+
 ## [0.7.3] - 2023-11-30
 
 ### Added
