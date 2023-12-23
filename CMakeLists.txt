@@ -65,6 +65,8 @@ juce_add_plugin(${PROJECT_NAME}
     FORMATS ${FORMATS}
     AU_SANDBOX_SAFE TRUE  
     BUNDLE_ID "dev.xivilay.scaleRemapper"
+    BLUETOOTH_PERMISSION_ENABLED TRUE 
+    BLUETOOTH_PERMISSION_TEXT "Needed for bluetooth midi input devices"
 )
 
 juce_add_binary_data(BinaryData SOURCES

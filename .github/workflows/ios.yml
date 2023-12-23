@@ -1,0 +1,67 @@
+name: CMake iOS
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+  PROJECT_NAME: ScaleRemapper
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        runner: ['macos']
+    runs-on: ${{ matrix.runner }}-latest
+    name: ${{ matrix.runner }}
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+        with:
+          token: ${{secrets.GH_PAT}}
+          submodules: 'recursive'
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Set Up Yarn
+        run: npm install -g yarn
+
+      - name: Install UI Dependencies
+        working-directory: ./ui
+        run: yarn install
+
+      - name: Build UI Bundle
+        working-directory: ./ui
+        run: yarn build
+
+      - name: Patch Blocks
+        working-directory: ./external/roli_blocks_basics
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/roli.patch
+
+      - name: Patch React-Juce
+        working-directory: ./external/react-juce
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
+
+      - name: Configure CMake
+        run: cmake -B build-ios -G Xcode -D CMAKE_BUILD_TYPE=Release -D CMAKE_SYSTEM_NAME=iOS -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Development" -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
+
+      - name: Navigate to build directory
+        run: cd ./build-ios
+
+      - name: Build
+        run: cmake --build . --config=Release -- -allowProvisioningUpdates
+
+      - name: Zip
+        working-directory: ${{github.workspace}}/build-ios/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
+        run: cmake -E tar cv ${{github.workspace}}/build-ios/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip Standalone/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
+          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip
+          if-no-files-found: error
+          retention-days: 1
