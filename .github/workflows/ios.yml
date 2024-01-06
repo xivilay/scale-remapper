@@ -12,10 +12,10 @@ env:
   APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
   APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
   
-  CERTIFICATE_PATH: ${{ env.RUNNER_TEMP }}/build_certificate.p12
+  #CERTIFICATE_PATH: ${{ env.RUNNER_TEMP }}/build_certificate.p12
   TMP_CERT_PATH: signingCertificate.p12
-  PP_PATH: ${{ env.RUNNER_TEMP }}/build_pp.mobileprovision
-  KEYCHAIN_PATH: ${{ env.RUNNER_TEMP }}/app-signing.keychain-db
+  #PP_PATH: ${{ env.RUNNER_TEMP }}/build_pp.mobileprovision
+  KEYCHAIN_PATH: app-signing.keychain-db
 
 jobs:
   build:
@@ -33,9 +33,9 @@ jobs:
 
       - name: Apple signing setup - Step 1 (create temporary keychain)
         run: |
-          security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.KEYCHAIN_PATH }}
-          security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
-          security unlock-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.KEYCHAIN_PATH }}
+          security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -lut 21600 ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
 
       - name: Apple signing setup - Step 2 (import certificate and provisioning profile from secrets)
         run: |
@@ -47,12 +47,12 @@ jobs:
           echo ${{ env.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ env.TMP_CERT_PATH }}
           security import ${{ env.TMP_CERT_PATH }} \
                           -f pkcs12 \
-                          -k ${{ env.KEYCHAIN_PATH }} \
+                          -k ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }} \
                           -P ${{ env.APPLE_P12_PASSWORD }} \
                           -T /usr/bin/codesign
           rm ${{ env.TMP_CERT_PATH }}
-          # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ env.KEYCHAIN_PATH }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
-          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+          # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
+          security list-keychain -d user -s ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
 
       - name: Apple signing setup - Step 4 (apply provisioning profile)
         run: |
