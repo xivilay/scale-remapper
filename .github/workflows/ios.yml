@@ -31,6 +31,9 @@ jobs:
           token: ${{secrets.GH_PAT}}
           submodules: 'recursive'
 
+      - name: Debug
+        run: env
+
       - name: Apple signing setup - Step 1 (create temporary keychain)
         run: |
           security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
