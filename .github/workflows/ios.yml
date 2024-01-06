@@ -44,13 +44,13 @@ jobs:
 
       - name: Apple signing setup - Step 3 (import certificate to keychain)
         run: |
-          echo ${{ env.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ env.TMP_CERT_PATH }}
-          security import ${{ env.TMP_CERT_PATH }} \
+          echo ${{ env.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ runner.temp }}/${{ env.TMP_CERT_PATH }}
+          security import ${{ runner.temp }}/${{ env.TMP_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }} \
                           -P ${{ env.APPLE_P12_PASSWORD }} \
                           -T /usr/bin/codesign
-          rm ${{ env.TMP_CERT_PATH }}
+          rm ${{ runner.temp }}/${{ env.TMP_CERT_PATH }}
           # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
           security list-keychain -d user -s ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }}
 
