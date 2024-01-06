@@ -35,7 +35,7 @@ jobs:
 
           # import certificate and provisioning profile from secrets
           echo -n "$APPLE_CERT_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$APPLE_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          # echo -n "$APPLE_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
           # create temporary keychain
           security create-keychain -p "$APPLE_KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -48,7 +48,7 @@ jobs:
 
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
