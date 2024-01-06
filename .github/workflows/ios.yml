@@ -47,12 +47,12 @@ jobs:
           echo ${{ env.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ runner.temp }}/${{ env.TMP_CERT_PATH }}
           security import ${{ runner.temp }}/${{ env.TMP_CERT_PATH }} \
                           -f pkcs12 \
-                          -k ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }} \
+                          -k ${{ runner.temp }}/${{ env.KEYCHAIN_FILENAME }} \
                           -P ${{ env.APPLE_P12_PASSWORD }} \
                           -T /usr/bin/codesign
           rm ${{ runner.temp }}/${{ env.TMP_CERT_PATH }}
-          # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
-          security list-keychain -d user -s ${{ runner.temp }}/${{ env.KEYCHAIN_PATH }}
+          # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ runner.temp }}/${{ env.KEYCHAIN_FILENAME }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
+          security list-keychain -d user -s ${{ runner.temp }}/${{ env.KEYCHAIN_FILENAME }}
 
       - name: Apple signing setup - Step 4 (apply provisioning profile)
         run: |
