@@ -15,7 +15,7 @@ env:
   #CERTIFICATE_PATH: ${{ env.RUNNER_TEMP }}/build_certificate.p12
   TMP_CERT_PATH: signingCertificate.p12
   #PP_PATH: ${{ env.RUNNER_TEMP }}/build_pp.mobileprovision
-  KEYCHAIN_PATH: app-signing.keychain-db
+  KEYCHAIN_FILENAME: app-signing.keychain-db
 
 jobs:
   build:
@@ -36,9 +36,9 @@ jobs:
 
       - name: Apple signing setup - Step 1 (create temporary keychain)
         run: |
-          security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
-          security set-keychain-settings -lut 21600 ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
-          security unlock-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_PATH }}
+          security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_FILENAME }}
+          security set-keychain-settings -lut 21600 ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_FILENAME }}
+          security unlock-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.RUNNER_TEMP }}/${{ env.KEYCHAIN_FILENAME }}
 
       - name: Apple signing setup - Step 2 (import certificate and provisioning profile from secrets)
         run: |
