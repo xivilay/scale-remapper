@@ -48,7 +48,7 @@ jobs:
           security import ${{ runner.temp }}/${{ env.TMP_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ runner.temp }}/${{ env.KEYCHAIN_FILENAME }} \
-                          -P ${{ env.APPLE_P12_PASSWORD }} \
+                          -P "${{ env.APPLE_P12_PASSWORD }}" \
                           -T /usr/bin/codesign
           rm ${{ runner.temp }}/${{ env.TMP_CERT_PATH }}
           # security import ${{ env.CERTIFICATE_PATH }} -f pkcs12 -k ${{ runner.temp }}/${{ env.KEYCHAIN_FILENAME }} -P "${ env.APPLE_P12_PASSWORD }}" -A -t cert 
