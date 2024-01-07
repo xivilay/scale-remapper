@@ -5,6 +5,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  BUILD_DIR: ${{github.workspace}}/build-ios
   PROJECT_NAME: ScaleRemapper
 jobs:
   build:
@@ -73,19 +74,26 @@ jobs:
         run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build-ios -G Xcode -D CMAKE_BUILD_TYPE=Release -D CMAKE_SYSTEM_NAME=iOS -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Development" -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
+        run: cmake \
+          -B ${{env.BUILD_DIR}} \
+          -G Xcode \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_SYSTEM_NAME=iOS \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 \
+          -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Development" \
+          -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build-ios --config=Release -- -allowProvisioningUpdates
+        run: cmake --build ${{env.BUILD_DIR}} --config=Release -- -allowProvisioningUpdates
 
       - name: Zip
-        working-directory: ${{github.workspace}}/build-ios/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
-        run: cmake -E tar cv ${{github.workspace}}/build-ios/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip Standalone/
+        working-directory: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
+        run: cmake -E tar cv ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip Standalone/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
-          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip
+          path: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip
           if-no-files-found: error
           retention-days: 1
