@@ -73,7 +73,8 @@ jobs:
         run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
 
       - name: Configure CMake
-        run: cmake \
+        run: |
+          cmake \
           -B ${{env.BUILD_DIR}} \
           -G Xcode \
           -D CMAKE_BUILD_TYPE=Release \
