@@ -41,8 +41,8 @@ jobs:
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
           # Step 3 (import and apply provisioning profile)
-          mkdir -p ${{ runner.temp }} Profiles
-          mkdir -p ~/Library/MobileDevice Provisioning
+          mkdir -p ${{ runner.temp }}/Profiles
+          mkdir -p ~/Library/MobileDevice/Provisioning
           echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
           unzip ${{ env.LOCAL_PP_PATH }} -d ${{ runner.temp }}/Profiles
           cp ${{ runner.temp }}/Profiles/ ~/Library/MobileDevice/Provisioning/
