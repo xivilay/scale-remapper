@@ -47,7 +47,6 @@ jobs:
           mkdir -p ${{ env.PROFILES_DIR }}
           echo "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
           unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ env.PROFILES_DIR }}
-          ls ${{ env.PROFILES_DIR }}
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
