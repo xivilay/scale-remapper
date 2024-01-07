@@ -93,9 +93,9 @@ jobs:
             ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
             ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app
           mkdir -p ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app/PlugIns
-          mv \
-            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/AUv3/${{ env.PROJECT_NAME }}.appex \
-            ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app/PlugIns/${{ env.PROJECT_NAME }}.appex
+          # mv \
+          #  ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/AUv3/${{ env.PROJECT_NAME }}.appex \
+          #  ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app/PlugIns/${{ env.PROJECT_NAME }}.appex
 
       - name: Zip
         working-directory: ${{ runner.temp }}
