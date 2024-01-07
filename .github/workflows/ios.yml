@@ -42,7 +42,7 @@ jobs:
 
           # Step 3 (import and apply provisioning profile)
           mkdir -p "${{ runner.temp }}/Provisioning Profiles"
-          #mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
           echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
           unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ runner.temp }}/Profiles
           cp -R "${{ runner.temp }}/Provisioning Profiles" "~/Library/MobileDevice"
