@@ -86,10 +86,6 @@ jobs:
       - name: Build
         run: cmake --build ${{ env.BUILD_DIR }} --config=Release -- -allowProvisioningUpdates
 
-      - name: Debug
-        run: env
-      
-
       - name: Prepare payload for .ipa
         run: |
           mkdir -p ${{ runner.temp }}/Payload
