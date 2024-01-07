@@ -86,14 +86,25 @@ jobs:
       - name: Build
         run: cmake --build ${{ env.BUILD_DIR }} --config=Release -- -allowProvisioningUpdates
 
+      - name: Prepare payload for .ipa
+        run: |
+          mkdir -p ${{ runner.temp }}/Payload
+          mv \
+            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
+            ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app
+          mkdir -p ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app/PlugIns
+          mv \
+            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/AUv3/${{ env.PROJECT_NAME }}.appex \
+            ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app/PlugIns/${{ env.PROJECT_NAME }}.appex
+
       - name: Zip
-        working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-        run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.zip --format=zip Standalone/ AUv3/
+        working-directory: ${{ runner.temp }}
+        run: cmake -E tar cv ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa --format=zip Payload/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}_iOS
-          path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.zip
+          path: ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa
           if-no-files-found: error
           retention-days: 1
