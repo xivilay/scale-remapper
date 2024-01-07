@@ -23,7 +23,7 @@ jobs:
       - name: Apple signing setup
         env:
           LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
-          LOCAL_PP_PATH: ${{ runner.temp }}/build_pp.mobileprovision
+          LOCAL_PP_ZIP_PATH: ${{ runner.temp }}/pp.zip
           LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
         run: |
           # Step 1 (create temporary keychain)
@@ -41,11 +41,12 @@ jobs:
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
           # Step 3 (import and apply provisioning profile)
-          mkdir -p ${{ runner.temp }}/Profiles
-          mkdir -p ~/Library/MobileDevice/Provisioning
-          echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
-          unzip ${{ env.LOCAL_PP_PATH }} -d ${{ runner.temp }}/Profiles
-          cp -R ${{ runner.temp }}/Profiles/ ~/Library/MobileDevice/Provisioning/
+          mkdir -p "${{ runner.temp }}/Provisioning Profiles"
+          #mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
+          echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
+          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ runner.temp }}/Profiles
+          cp -R "${{ runner.temp }}/Provisioning Profiles" "~/Library/MobileDevice"
+          ls "~/Library/MobileDevice/Provisioning Profiles"
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
