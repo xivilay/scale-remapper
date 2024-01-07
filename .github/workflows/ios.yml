@@ -32,21 +32,24 @@ jobs:
           security unlock-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
           
           # Step 2 (import certificate to keychain)
-          # echo -n "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
-          echo ${{ secrets.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ env.LOCAL_CERT_PATH }}
+          echo -n "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
           security import ${{ env.LOCAL_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
-                          -P "${{ secrets.APPLE_P12_PASSWORD }}" \
-                          # -A -t cert
-                          # -T /usr/bin/codesign
+                          -P "${{ secrets.APPLE_P12_PASSWORD }}"
           rm ${{ env.LOCAL_CERT_PATH }}
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
           # Step 3 (import and apply provisioning profile)
-          echo -n "${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp ${{ env.LOCAL_PP_PATH }} ~/Library/MobileDevice/Provisioning\ Profiles
+          
+          # echo -n "${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
+          # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          # cp ${{ env.LOCAL_PP_PATH }} ~/Library/MobileDevice/Provisioning\ Profiles
+          
+          mkdir -p ${{ runner.temp }} Profiles
+          echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
+          unzip ${{ env.LOCAL_PP_PATH }} -d ${{ runner.temp }}/Profiles
+          cp ${{ runner.temp }}/Profiles/ ~/Library/MobileDevice/Provisioning/
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
