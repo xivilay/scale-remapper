@@ -25,7 +25,7 @@ jobs:
           LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
           LOCAL_PP_ZIP_PATH: ${{ runner.temp }}/pp.zip
           LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
-          PROFILES_DIR: "Provisioning Profiles"
+          PROFILES_DIR: "Provisioning\ Profiles"
         run: |
           # Step 1 (create temporary keychain)
           security create-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
@@ -33,7 +33,7 @@ jobs:
           security unlock-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
           
           # Step 2 (import certificate to keychain)
-          echo -n "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
+          echo "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
           security import ${{ env.LOCAL_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
@@ -44,7 +44,7 @@ jobs:
           # Step 3 (import and apply provisioning profile)
           mkdir -p "${{ runner.temp }}/Provisioning Profiles"
           mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
-          echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
+          echo "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
           unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
           cp -R "${{ runner.temp }}/${{ env.PROFILES_DIR }}" "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
           echo ls "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
