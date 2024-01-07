@@ -25,6 +25,7 @@ jobs:
           LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
           LOCAL_PP_ZIP_PATH: ${{ runner.temp }}/pp.zip
           LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
+          PROFILES_DIR: "Provisioning Profiles"
         run: |
           # Step 1 (create temporary keychain)
           security create-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
@@ -44,10 +45,10 @@ jobs:
           mkdir -p "${{ runner.temp }}/Provisioning Profiles"
           mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
           echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
-          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ runner.temp }}/Profiles
-          cp -R "${{ runner.temp }}/Provisioning Profiles" "~/Library/MobileDevice/Provisioning Profiles"
-          echo ls "${{ runner.temp }}/Provisioning Profiles"
-          echo ls "~/Library/MobileDevice/Provisioning Profiles"
+          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
+          cp -R "${{ runner.temp }}/${{ env.PROFILES_DIR }}" "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
+          echo ls "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
+          echo ls "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
