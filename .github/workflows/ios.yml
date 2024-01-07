@@ -13,10 +13,6 @@ jobs:
         runner: ['macos']
     runs-on: ${{ matrix.runner }}-latest
     name: ${{ matrix.runner }}
-    env:
-      LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
-      LOCAL_PP_PATH: ${{ runner.temp }}/build_pp.mobileprovision
-      LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
