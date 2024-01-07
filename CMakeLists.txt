@@ -37,7 +37,7 @@ if(WIN32)
 endif()
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND FORMATS "AU")
+    list(APPEND FORMATS "AU" "AUv3")
 endif()
 
 set(VST2_DIR "sdk/vst2")
