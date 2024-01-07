@@ -45,8 +45,9 @@ jobs:
           mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
           echo -n "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
           unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ runner.temp }}/Profiles
-          cp -R "${{ runner.temp }}/Provisioning Profiles" "~/Library/MobileDevice"
-          ls "~/Library/MobileDevice/Provisioning Profiles"
+          cp -R "${{ runner.temp }}/Provisioning Profiles" "~/Library/MobileDevice/Provisioning Profiles"
+          echo ls "${{ runner.temp }}/Provisioning Profiles"
+          echo ls "~/Library/MobileDevice/Provisioning Profiles"
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
