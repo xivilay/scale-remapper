@@ -37,7 +37,8 @@ jobs:
           security import ${{ env.LOCAL_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
-                          -P "${{ secrets.APPLE_P12_PASSWORD }}"
+                          -P "${{ secrets.APPLE_P12_PASSWORD }}" \
+                          -T /usr/bin/codesign
           rm ${{ env.LOCAL_CERT_PATH }}
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
