@@ -5,7 +5,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  BUILD_DIR: ${{github.workspace}}/build-ios
+  BUILD_DIR: ${{ github.workspace }}/build-ios
   PROJECT_NAME: ScaleRemapper
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
-          token: ${{secrets.GH_PAT}}
+          token: ${{ secrets.GH_PAT }}
           submodules: 'recursive'
 
       - name: Apple signing setup
@@ -75,7 +75,7 @@ jobs:
       - name: Configure CMake
         run: |
           cmake \
-          -B ${{env.BUILD_DIR}} \
+          -B ${{ env.BUILD_DIR }} \
           -G Xcode \
           -D CMAKE_BUILD_TYPE=Release \
           -D CMAKE_SYSTEM_NAME=iOS \
@@ -84,18 +84,18 @@ jobs:
           -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
 
       - name: Build
-        run: cmake --build ${{env.BUILD_DIR}} --config=Release -- -allowProvisioningUpdates
+        run: cmake --build ${{ env.BUILD_DIR }} --config=Release -- -allowProvisioningUpdates
 
       - name: Zip
-        working-directory: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
+        working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
         run: |
           ls -R
-          cmake -E tar cv ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip AUv3/
+          cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.zip --format=zip AUv3/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{env.PROJECT_NAME}}_iOS
-          path: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip
+          name: ${{ env.PROJECT_NAME }}_iOS
+          path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.zip
           if-no-files-found: error
           retention-days: 1
