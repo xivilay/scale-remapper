@@ -75,9 +75,9 @@ jobs:
         run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{ env.PROJECT_NAME }}.lv2 VST3/${{ env.PROJECT_NAME }}.vst3
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
+          name: ${{ env.PROJECT_NAME }}_${{ matrix.runner }}
           path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z
           if-no-files-found: error
           retention-days: 1
