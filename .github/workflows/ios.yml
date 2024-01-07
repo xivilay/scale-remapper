@@ -88,12 +88,12 @@ jobs:
 
       - name: Zip
         working-directory: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
-        run: cmake -E tar cv ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip Standalone/
+        run: cmake -E tar cv ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip --format=zip Standalone/ AUv3/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
+          name: ${{env.PROJECT_NAME}}_iOS
           path: ${{env.BUILD_DIR}}/${{env.PROJECT_NAME}}_${{ matrix.runner }}.zip
           if-no-files-found: error
           retention-days: 1
