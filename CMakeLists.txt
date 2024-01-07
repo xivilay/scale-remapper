@@ -8,7 +8,7 @@ endif()
 
 set(VERSION "0.7.3")
 
-set(FORMATS "Standalone" "LV2" "VST3")
+set(FORMATS "Standalone" "LV2" "VST3" "AUv3")
 
 set(SRC_DIR "./src")
 set(JUCE_DIR "external/juce")
@@ -37,7 +37,7 @@ if(WIN32)
 endif()
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND FORMATS "AU" "AUv3")
+    list(APPEND FORMATS "AU")
 endif()
 
 set(VST2_DIR "sdk/vst2")
