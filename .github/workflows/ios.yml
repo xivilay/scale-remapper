@@ -6,11 +6,6 @@ on:
 env:
   BUILD_TYPE: Release
   PROJECT_NAME: ScaleRemapper
-  
-  APPLE_P12_CERT_BASE64: ${{ secrets.APPLE_P12_CERT_BASE64 }}
-  APPLE_P12_PASSWORD: ${{ secrets.APPLE_P12_PASSWORD }}
-  APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
-  APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
 jobs:
   build:
     strategy:
@@ -29,28 +24,31 @@ jobs:
           token: ${{secrets.GH_PAT}}
           submodules: 'recursive'
 
-      - name: Apple signing setup - Step 1 (create temporary keychain)
+      - name: Apple signing setup
+        env:
+          LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
+          LOCAL_PP_PATH: ${{ runner.temp }}/build_pp.mobileprovision
+          LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
         run: |
-          security create-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
+          # Step 1 (create temporary keychain)
+          security create-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
           security set-keychain-settings -lut 21600 ${{ env.LOCAL_KEYCHAIN_PATH }}
-          security unlock-keychain -p "${{ env.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
+          security unlock-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
           
-      - name: Apple signing setup - Step 2 (import certificate to keychain)
-        run: |
-          # echo -n "${{ env.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
-          echo ${{ env.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ env.LOCAL_CERT_PATH }}
+          # Step 2 (import certificate to keychain)
+          # echo -n "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
+          echo ${{ secrets.APPLE_P12_CERT_BASE64 }} | base64 --decode > ${{ env.LOCAL_CERT_PATH }}
           security import ${{ env.LOCAL_CERT_PATH }} \
                           -f pkcs12 \
                           -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
-                          -P "${{ env.APPLE_P12_PASSWORD }}" \
+                          -P "${{ secrets.APPLE_P12_PASSWORD }}" \
                           # -A -t cert
                           # -T /usr/bin/codesign
           rm ${{ env.LOCAL_CERT_PATH }}
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
-      - name: Apple signing setup - Step 3 (import and apply provisioning profile)
-        run: |
-          echo -n "${{ env.APPLE_PROVISION_PROFILE_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
+          # Step 3 (import and apply provisioning profile)
+          echo -n "${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_PATH }}
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp ${{ env.LOCAL_PP_PATH }} ~/Library/MobileDevice/Provisioning\ Profiles
 
