@@ -42,13 +42,10 @@ jobs:
           security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
 
           # Step 3 (import and apply provisioning profile)
-          mkdir -p "${{ runner.temp }}/Provisioning Profiles"
-          mkdir -p "~/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
           echo "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
-          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
-          cp -R "${{ runner.temp }}/${{ env.PROFILES_DIR }}" "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
-          echo ls "${{ runner.temp }}/${{ env.PROFILES_DIR }}"
-          echo ls "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
+          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
+          ls "~/Library/MobileDevice/${{ env.PROFILES_DIR }}"
 
       - name: Set Up Node.js
         uses: actions/setup-node@v2
