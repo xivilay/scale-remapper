@@ -8,7 +8,7 @@ endif()
 
 set(VERSION "0.7.3")
 
-set(FORMATS "Standalone" "LV2" "VST3" "AUv3")
+set(FORMATS "Standalone" "LV2" "VST3" "AUv3" "AU")
 
 set(SRC_DIR "./src")
 set(JUCE_DIR "external/juce")
@@ -34,10 +34,6 @@ if(WIN32)
     if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ASIO_DIR})
         set(BUILD_ASIO 1)
     endif()
-endif()
-
-IF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND FORMATS "AU")
 endif()
 
 set(VST2_DIR "sdk/vst2")
