@@ -72,6 +72,8 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASS }}
           keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASS }}
           alias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.5"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
