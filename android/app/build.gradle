@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     externalNativeBuild {
         cmake {
             path "../../CMakeLists.txt"
@@ -17,21 +17,14 @@ android {
         }
     }
 
-    lintOptions {
-        abortOnError true        // true by default
-        checkAllWarnings false
-        checkReleaseBuilds false
-        ignoreWarnings true       // false by default
-        quiet false               // false by default
-    }
 
     defaultConfig {
         applicationId "dev.xivilay.scaleremapper"
-        minSdkVersion    29
-        targetSdkVersion 29
+        minSdkVersion    31
+        targetSdkVersion 31
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_PLATFORM=android-29", "-DANDROID_STL=c++_static", "-DANDROID_CPP_FEATURES=exceptions rtti", "-DANDROID_ARM_MODE=arm", "-DANDROID_ARM_NEON=TRUE", "-DCMAKE_CXX_STANDARD=17", "-DCMAKE_CXX_EXTENSIONS=OFF"
+                arguments "-DANDROID_PLATFORM=android-31", "-DANDROID_STL=c++_static", "-DANDROID_CPP_FEATURES=exceptions rtti", "-DANDROID_ARM_MODE=arm", "-DANDROID_ARM_NEON=TRUE", "-DCMAKE_CXX_STANDARD=17", "-DCMAKE_CXX_EXTENSIONS=OFF"
             }
         }
         ndk {
@@ -77,6 +70,14 @@ android {
     }
 
     dependencies {
+    }
+    namespace 'dev.xivilay.scaleremapper'
+    lint {
+        abortOnError true        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet false               // false by default
     }
 
 }
