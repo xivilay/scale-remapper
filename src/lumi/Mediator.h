@@ -19,7 +19,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         }
 
         pts.removeListener(this);
-    }
+    };
     void sendCommand(int a) {
         if (b != nullptr) {
             Block::ProgramEventMessage e;
@@ -27,7 +27,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
             e.values[0] = a;
             b->sendProgramEvent(e);
         }
-    }
+    };
 
    private:
     void handleProgramEvent(Block&, const Block::ProgramEventMessage& event) {
@@ -40,13 +40,13 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         if (messageId == colorModeId) {
             appRoot->dispatchEvent("uiSettingsChange", colorModeId, messageValue);
         }
-    }
-    void handleProgramLoaded(Block& block) override {
+    };
+    void handleProgramLoaded(Block& block) {
         appRoot->dispatchEvent("requestComputedKeysData");
         block.removeProgramLoadedListener(this);
-    }
-    void topologyChanged() {
-        auto currentTopology = pts->getCurrentTopology();
+    };
+    void topologyChanged() override {
+        auto currentTopology = pts.getCurrentTopology();
         for (auto& block : currentTopology.blocks) {
             if (block->getType() == Block::lumiKeysBlock) {
                 b = block;

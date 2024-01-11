@@ -5,7 +5,7 @@
 const int standardKeyboardKeysCount = 12;
 const int scaleLength = 12;
 
-static AudioProcessorValueTreeState::ParameterLayout createParameterLayout(void) {
+AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     const int defaultTonics = 7;
     const float defaultIndex = 0.0f;
     const float defaultMode = 0.17f;
@@ -48,10 +48,7 @@ class MidiScaleRemapper : public AudioProcessor {
         }
     }
 
-    AudioProcessorEditor *createEditor() override {
-        auto *editor = new CustomEditor(*this);
-        return editor;
-    }
+    AudioProcessorEditor *createEditor() { return new CustomEditor(*this); }
 
     const String getName() const override { return ProjectInfo::projectName; }
 
