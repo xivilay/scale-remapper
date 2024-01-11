@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.5)
+cmake_minimum_required(VERSION 3.15)
 
 set(PROJECT_NAME "ScaleRemapper")
 
