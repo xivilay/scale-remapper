@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    externalNativeBuild {
+        cmake {
+            path "../../CMakeLists.txt"
+            version "3.24.1"
+        }
+    }
+    signingConfigs {
+        juceSigning {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    lintOptions {
+        abortOnError true        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet false               // false by default
+    }
+
+    defaultConfig {
+        applicationId "dev.xivilay.scaleremapper"
+        minSdkVersion    29
+        targetSdkVersion 29
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_PLATFORM=android-29", "-DANDROID_STL=c++_static", "-DANDROID_CPP_FEATURES=exceptions rtti", "-DANDROID_ARM_MODE=arm", "-DANDROID_ARM_NEON=TRUE", "-DCMAKE_CXX_STANDARD=17", "-DCMAKE_CXX_EXTENSIONS=OFF"
+            }
+        }
+        ndk {
+            abiFilters "x86", "arm64-v8a" // x86 x86_64 armeabi-v7a arm64-v8a
+        }
+    }
+
+    buildTypes {
+        debug {
+            initWith debug
+            debuggable    true
+            jniDebuggable true
+            signingConfig signingConfigs.juceSigning
+            externalNativeBuild {
+                cmake {
+                    arguments "-DJUCE_BUILD_CONFIGURATION=DEBUG", "-DCMAKE_CXX_FLAGS_DEBUG=-O0", "-DCMAKE_C_FLAGS_DEBUG=-O0"
+                }
+            }
+         }
+        release {
+            initWith release
+            debuggable    false
+            jniDebuggable false
+            signingConfig signingConfigs.juceSigning
+            externalNativeBuild {
+                cmake {
+                    arguments "-DJUCE_BUILD_CONFIGURATION=RELEASE", "-DCMAKE_CXX_FLAGS_RELEASE=-O3", "-DCMAKE_C_FLAGS_RELEASE=-O3"
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs +=
+            ["../../../JUCE/modules/juce_core/native/javacore/init",
+             "../../../JUCE/modules/juce_core/native/javacore/app",
+             "../../../JUCE/modules/juce_gui_basics/native/javaopt/app"]
+        main.res.srcDirs +=
+            []
+    }
+
+    repositories {
+    }
+
+    dependencies {
+    }
+
+}
