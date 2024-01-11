@@ -4,7 +4,6 @@ set(PROJECT_NAME "ScaleRemapper")
 
 if(ANDROID_PLATFORM)
     set(PROJECT_NAME "juce_jni")
-    set(CMAKE_PLUGIN_IS_STANDALONE 1)
 else()
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         set(PROJECT_NAME "${PROJECT_NAME}Dev")
