@@ -108,7 +108,7 @@
             "dependsOn": [
                 "cmake prepare build debug"
             ],
-            "hide": true
+            "hide": false
         },
         {
             "type": "process",

@@ -9,6 +9,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  BUILD_DIR: ${{ github.workspace }}/build
   PROJECT_NAME: ScaleRemapper
 
 jobs:
@@ -20,15 +21,15 @@ jobs:
     name: ${{ matrix.runner }}
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          token: ${{secrets.GH_PAT}}
+          token: ${{ secrets.GH_PAT }}
           submodules: 'recursive'
 
       - name: Set Up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: latest
 
       - name: Set Up Yarn
         run: npm install -g yarn
@@ -44,7 +45,16 @@ jobs:
       - name: Install Linux Deps
         if: runner.os == 'Linux'
         run: |
-            sudo apt-get update && sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev
+            sudo apt-get update &&  \
+            sudo apt install \
+              libasound2-dev \
+              libcurl4-openssl-dev \
+              libx11-dev \
+              libxinerama-dev \
+              libxext-dev \
+              libfreetype6-dev \
+              libwebkit2gtk-4.0-dev \
+              libglu1-mesa-dev
 
       - name: Patch Blocks
         working-directory: ./external/roli_blocks_basics
@@ -54,27 +64,21 @@ jobs:
         working-directory: ./external/react-juce
         run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
 
-      - name: Configure CMake for Standalone
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=1
+      - name: Configure CMake
+        run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
-      - name: Build Standalone
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-      - name: Configure CMake for Plugins
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PLUGIN_IS_STANDALONE=0
-
-      - name: Build Plugins
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Build
+        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
 
       - name: Zip
-        working-directory: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_artefacts/${{env.BUILD_TYPE}}
-        run: cmake -E tar cv ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{env.PROJECT_NAME}}.lv2 VST3/${{env.PROJECT_NAME}}.vst3
+        working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
+        run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{ env.PROJECT_NAME }}.lv2 VST3/${{ env.PROJECT_NAME }}.vst3
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{env.PROJECT_NAME}}_${{ matrix.runner }}
-          path: ${{github.workspace}}/build/${{env.PROJECT_NAME}}_${{ matrix.runner }}.7z
+          name: ${{ env.PROJECT_NAME }}_${{ matrix.runner }}
+          path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z
           if-no-files-found: error
           retention-days: 1
 
@@ -92,20 +96,20 @@ jobs:
         strip_v: true
 
     - name: Checkout Source Code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Extract Release Notes
       id: extract-release-notes
       uses: ffurrer2/extract-release-notes@v1
 
     - name: Download All Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
 
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "${{env.PROJECT_NAME}}*/*.7z"
+        artifacts: "${{ env.PROJECT_NAME }}*/*.7z"
         artifactContentType: application/zip
         token: ${{ secrets.GH_RELEASE }}
-        name: ${{steps.tag.outputs.tag}}
+        name: ${{ steps.tag.outputs.tag }}
         body: ${{ steps.extract-release-notes.outputs.release_notes }}
         prerelease: true

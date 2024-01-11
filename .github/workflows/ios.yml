@@ -1,0 +1,106 @@
+name: CMake iOS
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+  BUILD_DIR: ${{ github.workspace }}/build-ios
+  PROJECT_NAME: ScaleRemapper
+jobs:
+  build:
+    strategy:
+      matrix:
+        runner: ['macos']
+    runs-on: ${{ matrix.runner }}-latest
+    name: ${{ matrix.runner }}
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          submodules: 'recursive'
+
+      - name: Apple signing setup
+        env:
+          LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
+          LOCAL_PP_ZIP_PATH: ${{ runner.temp }}/pp.zip
+          LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
+          PROFILES_DIR: ~/Library/MobileDevice/Provisioning\ Profiles
+        run: |
+          # Step 1 (create temporary keychain)
+          security create-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
+          security set-keychain-settings -lut 21600 ${{ env.LOCAL_KEYCHAIN_PATH }}
+          security unlock-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
+          
+          # Step 2 (import certificate to keychain)
+          echo "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
+          security import ${{ env.LOCAL_CERT_PATH }} \
+                          -f pkcs12 \
+                          -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
+                          -P "${{ secrets.APPLE_P12_PASSWORD }}" \
+                          -T /usr/bin/codesign
+          rm ${{ env.LOCAL_CERT_PATH }}
+          security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
+
+          # Step 3 (import and apply provisioning profile)
+          mkdir -p ${{ env.PROFILES_DIR }}
+          echo "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
+          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ env.PROFILES_DIR }}
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Set Up Yarn
+        run: npm install -g yarn
+
+      - name: Install UI Dependencies
+        working-directory: ./ui
+        run: yarn install
+
+      - name: Build UI Bundle
+        working-directory: ./ui
+        run: yarn build
+
+      - name: Patch Blocks
+        working-directory: ./external/roli_blocks_basics
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/roli.patch
+
+      - name: Patch React-Juce
+        working-directory: ./external/react-juce
+        run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
+
+      - name: Configure CMake
+        run: |
+          cmake \
+          -B ${{ env.BUILD_DIR }} \
+          -G Xcode \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_SYSTEM_NAME=iOS \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 \
+          -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Development" \
+          -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
+
+      - name: Build
+        run: cmake --build ${{ env.BUILD_DIR }} --config=Release -- -allowProvisioningUpdates
+
+      - name: Prepare payload for .ipa
+        run: |
+          mkdir -p ${{ runner.temp }}/Payload
+          mv \
+            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
+            ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app
+
+      - name: Zip
+        working-directory: ${{ runner.temp }}
+        run: cmake -E tar cv ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa --format=zip Payload/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}_iOS
+          path: ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa
+          if-no-files-found: error
+          retention-days: 1

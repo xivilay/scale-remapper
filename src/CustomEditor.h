@@ -35,18 +35,51 @@ class CustomEditor : public AudioProcessorEditor {
                 addChildComponent(settings);
                 settings->enterModalState(false, nullptr, true);
             }
-        };
+
+            const auto index = static_cast<size_t>(p->getParameterIndex());
+            const auto value = p->getValue();
+
+            paramReadouts[index].value = value;
+            paramReadouts[index].dirty = true;
+
+            p->addListener(this);
+        }
+
+        File exeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
+#if JUCE_DEBUG
+        
+        File bundle = exeDir.getChildFile("js/bundle.js");
+
+        jassert(bundle.existsAsFile());
+        bundleFile = bundle;
+
+        harness.onBeforeAll = [this]() { beforeBundleEvaluated(); };
+        harness.onAfterAll = [this]() { afterBundleEvaluated(); };
+
+        harness.watch(bundleFile);
+        harness.start();
+#else
+        beforeBundleEvaluated();
+        engine->evaluateInline(String::fromUTF8(BinaryData::bundle_js));
+        afterBundleEvaluated();
+#endif
+
+        File localScales = exeDir.getChildFile("scales.txt");
+        if (localScales.existsAsFile()) {
+            auto fileText = localScales.loadFileAsString();
+            appRoot.dispatchEvent("getLocalScales", fileText);
+        }
+
+        addAndMakeVisible(appRoot);
+
+        setSize(550, 750);
+
+        startTimerHz(30);
     }
-    ~CustomEditor() {}
-
-    void resized() {
-        auto r = getLocalBounds();
-        auto currentWidth = r.getWidth();
-        auto currentHeight = r.getHeight();
-
-        editor.setBounds(r.removeFromBottom(height));
-        pairButton.setBounds(0, 0, currentWidth / 2, 50);
-        settingsButton.setBounds(currentWidth / 2, 0, currentWidth / 2, 50);
+    ~CustomEditor() {
+        for (auto& p : processor.getParameters()) {
+            p->removeListener(this);
+        }
     }
     void paint(Graphics& g) { g.fillAll(Colours::transparentWhite); }
 

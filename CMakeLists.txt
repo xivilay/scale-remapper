@@ -11,9 +11,9 @@ else()
     endif()
 endif()
 
-set(VERSION "0.7.0")
+set(VERSION "0.7.5")
 
-set(FORMATS "")
+set(FORMATS "Standalone" "VST3" "AUv3" "AU" "LV2")
 
 set(SRC_DIR "./src")
 set(JUCE_DIR "external/juce")
@@ -26,15 +26,6 @@ set(JS_BUNDLE_PATH "./ui/build/js/bundle.js")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(CMAKE_PLUGIN_IS_STANDALONE)
-    message(STATUS "Building as STANDALONE")
-    list(APPEND FORMATS "Standalone")
-else()
-    message(STATUS "Building as Plugin")
-    list(APPEND FORMATS "LV2")
-    list(APPEND FORMATS "VST3")
-endif()
-
 project(${PROJECT_NAME} VERSION ${VERSION})
 
 add_subdirectory(${JUCE_DIR} "juce")
@@ -42,7 +33,7 @@ add_subdirectory(${JUCE_DIR} "juce")
 juce_add_module(${BLOCKS_DIR})
 juce_add_module(${REACT_JUCE_DIR})
 
-if(WIN32 AND CMAKE_PLUGIN_IS_STANDALONE)
+if(WIN32)
     message(STATUS "Building for Windows...")
     set(ASIO_DIR "sdk/asio")
     if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ASIO_DIR})
@@ -51,7 +42,7 @@ if(WIN32 AND CMAKE_PLUGIN_IS_STANDALONE)
 endif()
 
 set(VST2_DIR "sdk/vst2")
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${VST2_DIR} AND NOT CMAKE_PLUGIN_IS_STANDALONE)
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${VST2_DIR})
     set(BUILD_VST2 1)
     juce_set_vst2_sdk_path(${VST2_DIR})
     list(APPEND FORMATS "VST")
@@ -70,12 +61,17 @@ else()
         PRODUCT_NAME "${PROJECT_NAME}"
         NEEDS_MIDI_INPUT TRUE
         NEEDS_MIDI_OUTPUT TRUE
+        IS_MIDI_EFFECT TRUE
         PLUGIN_MANUFACTURER_CODE XivY
         PLUGIN_CODE Xiv8
         LV2URI "https://github.com/xivilay/scale-remapper"
         VST3_CATEGORIES "Instrument Tools"
         ICON_SMALL "${SRC_DIR}/icons/small.png"
         FORMATS ${FORMATS}
+        AU_SANDBOX_SAFE TRUE  
+        BUNDLE_ID "dev.xivilay.scaleRemapper"
+        BLUETOOTH_PERMISSION_ENABLED TRUE 
+        BLUETOOTH_PERMISSION_TEXT "Needed for bluetooth midi input devices"
     )
 endif()
 
@@ -97,8 +93,11 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     JUCE_WEB_BROWSER=0
 )
 
-if(WIN32 AND NOT ANDROID AND NOT CMAKE_PLUGIN_IS_STANDALONE) 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_USE_WINRT_MIDI=1) 
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE 
+        JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
+    ) 
+    add_link_options("-Wl,-weak_reference_mismatches,weak")
 endif()
 
 if(BUILD_VST2)

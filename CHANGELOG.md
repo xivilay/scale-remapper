@@ -1,6 +1,37 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.5] - 2024-01-11
+
+### Changed
+
+* [ui] inner dependencies (music-theory)
+* [juce] update to 7.0.9
+
+## [0.7.4] - 2023-12-07
+
+### Changed
+
+* [ui] inner dependencies (music-theory)
+
+## [0.7.3] - 2023-11-30
+
+### Added
+
+* AUv3 build configurations
+
+## [0.7.2] - 2023-11-30
+
+### Changed
+
+* [ui] updated packages and add support for web
+
+## [0.7.1] - 2023-02-25
+
+### Fixed
+
+* Disable WinRT in plugins due to performance issues
+
 ## [0.7.0] - 2023-02-15
 
 ### Fixed

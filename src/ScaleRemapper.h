@@ -23,7 +23,8 @@ static AudioProcessorValueTreeState::ParameterLayout createParameterLayout(void)
     for (int i = 0; i < scaleLength; i++) {
         auto istr = std::to_string(i);
         auto defaultInterval = defaultScaleIntervals[i];
-        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength, defaultInterval));
+        p.add(std::make_unique<AudioParameterInt>("interval" + istr, "Scale Interval " + istr, 1, scaleLength,
+                                                  defaultInterval));
     }
 
     return p;
