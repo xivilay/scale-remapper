@@ -76,6 +76,7 @@ jobs:
         run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{ env.PROJECT_NAME }}.lv2 VST3/${{ env.PROJECT_NAME }}.vst3 AU/${{ env.PROJECT_NAME }}.component
 
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}_${{ matrix.runner }}
