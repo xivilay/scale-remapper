@@ -1,0 +1,61 @@
+name: Android
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: ScaleRemapper
+  BUILD_TYPE: Release
+  RELEASE_DIR: ${{ github.workspace }}/android/app/build/outputs/apk/release
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: ubuntu
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          submodules: 'recursive'
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Set Up Yarn
+        run: npm install -g yarn
+
+      - name: Install UI Dependencies
+        working-directory: ./ui
+        run: yarn install
+
+      - name: Build UI Bundle
+        working-directory: ./ui
+        run: yarn build
+
+      - name: Make Gradlew Executable
+        working-directory: ./android
+        run: chmod +x ./gradlew
+        
+      - name: Build
+        working-directory: ./android
+        run: ./gradlew assembleRelease
+
+      - name: Sign
+        id: sign
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: ${{ env.RELEASE_DIR }}
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY_BASE64 }}
+          keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASS }}
+          keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASS }}
+          alias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PROJECT_NAME }}
+          path: ${{ steps.sign.outputs.signedReleaseFile }}
