@@ -9,8 +9,8 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
     Mediator(reactjuce::ReactApplicationRoot& root, AudioProcessor& proc) : processor(proc) {
         appRoot = &root;
         pts.addListener(this);
-    };
-    ~Mediator() {
+    }
+    ~Mediator() override {
         if (b != nullptr) {
             b->setProgram(nullptr);
             b->removeProgramLoadedListener(this);
@@ -19,7 +19,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         }
 
         pts.removeListener(this);
-    };
+    }
     void sendCommand(int a) {
         if (b != nullptr) {
             Block::ProgramEventMessage e;
@@ -27,10 +27,10 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
             e.values[0] = a;
             b->sendProgramEvent(e);
         }
-    };
+    }
 
    private:
-    void handleProgramEvent(Block&, const Block::ProgramEventMessage& event) {
+    void handleProgramEvent(Block&, const Block::ProgramEventMessage& event) override {
         int messageId = event.values[0];
         int messageValue = event.values[1];
         if (messageId == octaveId) {
@@ -40,11 +40,11 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
         if (messageId == colorModeId) {
             appRoot->dispatchEvent("uiSettingsChange", colorModeId, messageValue);
         }
-    };
-    void handleProgramLoaded(Block& block) {
+    }
+    void handleProgramLoaded(Block& block) override{
         appRoot->dispatchEvent("requestComputedKeysData");
         block.removeProgramLoadedListener(this);
-    };
+    }
     void topologyChanged() override {
         auto currentTopology = pts.getCurrentTopology();
         for (auto& block : currentTopology.blocks) {
@@ -56,7 +56,7 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
                 return;
             }
         }
-    };
+    }
     PhysicalTopologySource pts;
     Block::Ptr b;
     reactjuce::ReactApplicationRoot* appRoot;
@@ -67,5 +67,5 @@ class Mediator : private TopologySource::Listener, Block::ProgramEventListener, 
     const int octavesCount = 10;
     const int colorModeId = 64;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Mediator);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Mediator)
 };

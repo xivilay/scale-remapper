@@ -173,6 +173,7 @@ if(ANDROID)
         "-DJucePlugin_ManufacturerEmail=\"\""
         "-DJucePlugin_ManufacturerCode=XivY"
         "-DJucePlugin_PluginCode=Xiv8"
+        "-DJucePlugin_VSTUniqueID=\"Xiv8\""
         "-DJucePlugin_IsSynth=0"
         "-DJucePlugin_WantsMidiInput=1"
         "-DJucePlugin_ProducesMidiOutput=1"

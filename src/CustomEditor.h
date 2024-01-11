@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BinaryData.h>
+
 #include "lumi/Mediator.h"
 
 using namespace reactjuce;
@@ -27,7 +28,6 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         }
 
         File exeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
-
 #if (JUCE_DEBUG && !JUCE_ANDROID)
         File bundle = exeDir.getChildFile("js/bundle.js");
 
@@ -54,6 +54,7 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         addAndMakeVisible(appRoot);
 
         setSize(550, 750);
+
         startTimerHz(30);
     }
     ~CustomEditor() {
@@ -66,7 +67,6 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
         paramReadouts[static_cast<size_t>(parameterIndex)].value = newValue;
         paramReadouts[static_cast<size_t>(parameterIndex)].dirty = true;
     }
-
     void parameterGestureChanged(int, bool) {}
 
     void timerCallback() {
@@ -120,8 +120,11 @@ class CustomEditor : public AudioProcessorEditor, public AudioProcessorParameter
     std::shared_ptr<EcmascriptEngine> engine;
     ReactApplicationRoot appRoot;
     AppHarness harness;
+
     Mediator mediator;
+
     File bundleFile;
+
     std::map<String, AudioProcessorParameter*> parameters;
 
     struct ParameterReadout {
