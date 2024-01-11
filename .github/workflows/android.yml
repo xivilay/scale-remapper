@@ -25,6 +25,9 @@ jobs:
         with:
           cmakeVersion: 3.24.1 
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
@@ -72,8 +75,6 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASS }}
           keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASS }}
           alias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.5"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
