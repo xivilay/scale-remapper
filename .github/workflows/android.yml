@@ -34,6 +34,9 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Debug
+        run: ls /usr/local/lib/android/sdk/build-tools/
+
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
@@ -81,6 +84,8 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASS }}
           keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASS }}
           alias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
