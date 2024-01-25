@@ -7,6 +7,7 @@ env:
   BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build-ios
   PROJECT_NAME: ScaleRemapper
+
 jobs:
   build:
     strategy:
@@ -77,14 +78,18 @@ jobs:
           cmake \
           -B ${{ env.BUILD_DIR }} \
           -G Xcode \
-          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
           -D CMAKE_SYSTEM_NAME=iOS \
           -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 \
           -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Development" \
           -D CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=VN2HUYH284
 
       - name: Build
-        run: cmake --build ${{ env.BUILD_DIR }} --config=Release -- -allowProvisioningUpdates
+        run: |
+          cmake \
+          --build ${{ env.BUILD_DIR }} \
+          --config=${{ env.BUILD_TYPE }} \
+          -- -allowProvisioningUpdates
 
       - name: Prepare payload for .ipa
         run: |

@@ -66,10 +66,16 @@ jobs:
         run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
 
       - name: Configure CMake
-        run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        run: |
+          cmake \
+          -B ${{ env.BUILD_DIR }} \
+          -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build
-        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
+        run: |
+          cmake \
+          --build ${{ env.BUILD_DIR }} \
+          --config ${{ env.BUILD_TYPE }}
 
       - name: Zip (Mac)
         if: runner.os == 'macOS'
