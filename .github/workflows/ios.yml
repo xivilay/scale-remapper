@@ -22,8 +22,6 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           submodules: 'recursive'
 
-      - uses: ./.github/actions/apple-signing-setup
-
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
