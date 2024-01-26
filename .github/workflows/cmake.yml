@@ -112,7 +112,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           cmake \
-          -B ${{ env.BUILD_DIR }} \
+          -B ${{ env.BUILD_DIR }}_${{ env.IOS_NAME }} \
           -G Xcode \
           -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
           -D CMAKE_SYSTEM_NAME=${{ env.IOS_NAME }} \
@@ -125,7 +125,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           cmake \
-          --build ${{ env.BUILD_DIR }} \
+          --build ${{ env.BUILD_DIR }}_${{ env.IOS_NAME }} \
           --config=${{ env.BUILD_TYPE }} \
           -- -allowProvisioningUpdates
 
@@ -134,7 +134,7 @@ jobs:
         run: |
           mkdir -p ${{ runner.temp }}/Payload
           mv \
-            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
+            ${{ env.BUILD_DIR }}_${{ env.IOS_NAME }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
             ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app
 
       - name: Zip (iOS)
