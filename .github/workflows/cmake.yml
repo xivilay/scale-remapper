@@ -108,6 +108,53 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+      - name: Configure CMake (iOS)
+        if: runner.os == 'macOS'
+        run: |
+          cmake \
+          -B ${{ env.BUILD_DIR }} \
+          -G Xcode \
+          -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+          -D CMAKE_SYSTEM_NAME=${{ env.IOS_NAME }} \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET=15.0 \
+          -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="" \
+          -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO \
+          -D CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
+
+      - name: Build (iOS)
+        if: runner.os == 'macOS'
+        run: |
+          cmake \
+          --build ${{ env.BUILD_DIR }} \
+          --config=${{ env.BUILD_TYPE }} \
+          -- -allowProvisioningUpdates
+
+      - name: Prepare payload for .ipa (iOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p ${{ runner.temp }}/Payload
+          mv \
+            ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/Standalone/${{ env.PROJECT_NAME }}.app \
+            ${{ runner.temp }}/Payload/${{ env.PROJECT_NAME }}.app
+
+      - name: Zip (iOS)
+        if: runner.os == 'macOS'
+        working-directory: ${{ runner.temp }}
+        run: |
+          cmake \
+            -E tar cv ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa \
+            --format=zip \
+              Payload/
+
+      - name: Upload artifacts (iOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}_${{ env.IOS_NAME }}
+          path: ${{ runner.temp }}/${{ env.PROJECT_NAME }}.ipa
+          if-no-files-found: error
+          retention-days: 1
+
   release:
     if: contains(github.ref, 'tags/v')
     runs-on: ubuntu-latest
