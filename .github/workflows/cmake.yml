@@ -67,26 +67,26 @@ jobs:
         run: git apply --reject --whitespace=fix -v ../../scripts/patches/react.patch
 
       - name: Configure CMake
-        run: |
-          cmake \
-          -B ${{ env.BUILD_DIR }} \
+        run: >
+          cmake
+          -B ${{ env.BUILD_DIR }}
           -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build
-        run: |
-          cmake \
-          --build ${{ env.BUILD_DIR }} \
+        run: >
+          cmake
+          --build ${{ env.BUILD_DIR }}
           --config ${{ env.BUILD_TYPE }}
 
       - name: Zip (Mac)
         if: runner.os == 'macOS'
         working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-        run: |
-          cmake \
-            -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z \
-            --format=7zip \
-              Standalone/ \
-              VST3/${{ env.PROJECT_NAME }}.vst3 \
+        run: >
+          cmake
+            -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z
+            --format=7zip
+              Standalone/
+              VST3/${{ env.PROJECT_NAME }}.vst3
               AU/${{ env.PROJECT_NAME }}.component
 
       - name: Zip (non Mac)
