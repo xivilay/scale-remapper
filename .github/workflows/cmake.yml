@@ -12,6 +12,7 @@ env:
   BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build
   PROJECT_NAME: ScaleRemapper
+  IOS_NAME: iOS
 
 jobs:
   build:
@@ -80,12 +81,24 @@ jobs:
       - name: Zip (Mac)
         if: runner.os == 'macOS'
         working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-        run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z --format=7zip Standalone/ VST3/${{ env.PROJECT_NAME }}.vst3 AU/${{ env.PROJECT_NAME }}.component
+        run: |
+          cmake \
+            -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z \
+            --format=7zip \
+              Standalone/ \
+              VST3/${{ env.PROJECT_NAME }}.vst3 \
+              AU/${{ env.PROJECT_NAME }}.component
 
       - name: Zip (non Mac)
         if: runner.os != 'macOS'
         working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-        run: cmake -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z --format=7zip Standalone/ LV2/${{ env.PROJECT_NAME }}.lv2 VST3/${{ env.PROJECT_NAME }}.vst3
+        run: |
+          cmake \
+            -E tar cv ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_${{ matrix.runner }}.7z \
+            --format=7zip \
+              Standalone/ \
+              LV2/${{ env.PROJECT_NAME }}.lv2 \
+              VST3/${{ env.PROJECT_NAME }}.vst3
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
