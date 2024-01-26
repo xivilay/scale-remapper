@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.7.6] - 2024-01-26
+
+### Changed
+
+* [ui] inner dependencies (music-theory)
+* changed app icon, added more sizes
+
+### Added
+
+* AUv3 unsigned iOS .ipa release. It is not present in official Apple store and can be sideloaded/installed manualy (with Sideloadly or TrollStore)
+
 ## [0.7.5] - 2024-01-11
 
 ### Changed

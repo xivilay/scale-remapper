@@ -10,7 +10,7 @@ else()
     endif()
 endif()
 
-set(VERSION "0.7.5")
+set(VERSION "0.7.6")
 
 set(FORMATS "Standalone" "VST3" "AUv3" "AU" "LV2")
 
@@ -66,7 +66,7 @@ else()
         LV2URI "https://github.com/xivilay/scale-remapper"
         VST3_CATEGORIES "Instrument Tools"
         ICON_SMALL "${SRC_DIR}/icons/64.png"
-        ICON_BIG "${SRC_DIR}/icons/256.png"
+        ICON_BIG "${SRC_DIR}/icons/512.png"
         FORMATS ${FORMATS}
         AU_SANDBOX_SAFE TRUE  
         BUNDLE_ID "dev.xivilay.scaleRemapper"
