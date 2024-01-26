@@ -65,7 +65,8 @@ else()
         PLUGIN_CODE Xiv8
         LV2URI "https://github.com/xivilay/scale-remapper"
         VST3_CATEGORIES "Instrument Tools"
-        ICON_SMALL "${SRC_DIR}/icons/small.png"
+        ICON_SMALL "${SRC_DIR}/icons/64.png"
+        ICON_BIG "${SRC_DIR}/icons/256.png"
         FORMATS ${FORMATS}
         AU_SANDBOX_SAFE TRUE  
         BUNDLE_ID "dev.xivilay.scaleRemapper"
