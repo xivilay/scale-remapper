@@ -22,32 +22,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           submodules: 'recursive'
 
-      - name: Apple signing setup
-        env:
-          LOCAL_CERT_PATH: ${{ runner.temp }}/build_certificate.p12
-          LOCAL_PP_ZIP_PATH: ${{ runner.temp }}/pp.zip
-          LOCAL_KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
-          PROFILES_DIR: ~/Library/MobileDevice/Provisioning\ Profiles
-        run: |
-          # Step 1 (create temporary keychain)
-          security create-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
-          security set-keychain-settings -lut 21600 ${{ env.LOCAL_KEYCHAIN_PATH }}
-          security unlock-keychain -p "${{ secrets.APPLE_KEYCHAIN_PASSWORD}}" ${{ env.LOCAL_KEYCHAIN_PATH }}
-          
-          # Step 2 (import certificate to keychain)
-          echo "${{ secrets.APPLE_P12_CERT_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_CERT_PATH }}
-          security import ${{ env.LOCAL_CERT_PATH }} \
-                          -f pkcs12 \
-                          -k ${{ env.LOCAL_KEYCHAIN_PATH }} \
-                          -P "${{ secrets.APPLE_P12_PASSWORD }}" \
-                          -T /usr/bin/codesign
-          rm ${{ env.LOCAL_CERT_PATH }}
-          security list-keychain -d user -s ${{ env.LOCAL_KEYCHAIN_PATH }}
-
-          # Step 3 (import and apply provisioning profile)
-          mkdir -p ${{ env.PROFILES_DIR }}
-          echo "${{ secrets.APPLE_PROVISION_PROFILES_ZIP_BASE64 }}" | base64 --decode -o ${{ env.LOCAL_PP_ZIP_PATH }}
-          unzip ${{ env.LOCAL_PP_ZIP_PATH }} -d ${{ env.PROFILES_DIR }}
+      - uses: ./.github/actions/apple-signing-setup
 
       - name: Set Up Node.js
         uses: actions/setup-node@v4
